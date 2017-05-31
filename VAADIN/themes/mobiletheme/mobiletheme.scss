@@ -1,0 +1,365 @@
+@import "../valo/valo.scss";
+
+@mixin mobiletheme {
+  @include valo;
+  
+  $css-padding: 16px;
+  $field-padding: 12px;
+  $theme-color:#6d84a2; 
+  $line-border-color:#E0E0E0;
+  $toolbar-height: 45px;
+  
+  .login-content {
+     padding-bottom: 1px;
+     padding-top: $css-padding;
+	 padding-right: $css-padding;
+     padding-left: $css-padding;
+     width: 100%;
+  }
+ 
+  .bx-loginform {
+	 border: 0;
+	 border-radius: 4px;
+     overflow: hidden;
+     padding: 0;
+  }
+ 
+  .v-verticallayout.bx-loginform .v-textfield {
+  	 -webkit-appearance: none;
+     box-sizing: border-box;
+     width: 100%;
+     font-size: 14px;
+     padding: $field-padding;
+  }
+ 
+   .login-content .v-label {
+    vertical-align: baseline;
+  }
+ 
+  .bx-loginfield {
+     border-radius: 4px 4px 0 0;
+	 border-bottom-color: transparent;
+     border-bottom: 0;
+  }
+ 
+  .bx-loginpassword {
+     border-radius: 0 0 4px 4px;
+     margin-top: (-$field-padding);
+     margin-bottom: 10px;
+     border-top-color: transparent;
+     border-top: 0;
+  }
+ 
+   .bx-loginbutton {
+  	 margin-top: 10px;
+  	 color: #FFFFFF;
+  	 background: $theme-color;
+  	 width: 100%;
+  	 font-weight: bold;
+  	 border: 0;
+  	 text-shadow: 0 -1px rgba(0, 0, 0, .25);
+  }
+ 
+  .bx-login-logo {
+	display: block;
+    margin: 0 auto $css-padding auto;
+  }
+ 
+  .bx-select {
+     display: inline-block !important;
+     padding-top: 5px;
+  }
+ 
+  .v-select.bx-select .v-select-select, .v-select.bxwindow-field .v-select-select, .search-field {
+  	 width: 100%;
+  }
+ 
+  .bx-toolbar, .bx-footer {
+     box-sizing: border-box;
+     -webkit-box-sizing: border-box;
+     border-top: 1px solid #6d84a2;
+     display: block;    
+     height: $toolbar-height !important;
+     background-color: $theme-color;
+	 top:0%;
+  }
+ 
+  .bx-footer {
+    padding: 0 10px;
+    position: fixed;
+    top: auto;
+    bottom: 0%;
+    min-height: 0px;
+  }
+ 
+  .bx-toolbar .v-icon, .bx-footer .v-icon {
+   	color: white;
+  }
+ 
+  .v-horizontallayout.bx-toolbar .v-expand {
+   	 padding-left: 0 !important;
+  }
+ 
+  .bx-toolbar-button, .bx-footer-button {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0 16px;
+    height: 100%;
+  }
+ 
+  .bx-footer-button {
+  	width: 100%;
+  	text-align: center;
+  }
+ 
+  #left-toolbar-button {
+  	margin-left: 24px;
+  }
+ 
+  .bx-pagetitle {
+     overflow: hidden;
+     height: $toolbar-height;
+     line-height: $toolbar-height;
+     font-size: 14px;
+     font-weight: bold;
+     text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+     text-align: center;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+     color: #FFFFFF;
+  }
+ 
+  .bx-menu-button {
+  	 margin: 0;
+     border: none;
+     border-bottom: 1px solid $line-border-color;
+     padding: 8px 0 8px 8px;
+     font-size: 18px;
+     font-weight: bold;
+     background: white;
+     display: block;
+     text-align: left;
+     border-radius: 0;
+     height: 100%;
+  }
+ 
+  .primary {
+	font-size: 17px;
+	font-weight: bold;
+	/*float: left;*/
+	padding-right: 5px;
+  }
+  
+  .secondary {
+	font-size: 15px;
+	font-weight: normal;
+	/*float: none;*/
+   }
+
+   .selectioncolumn {
+	font-size: 13px;
+	font-weight: normal;
+	padding-left: 5px;
+   }
+  
+  .bxwindow-content, .bxprocess-content {
+  	background: white;
+  	padding-bottom: 45px;
+  }
+ 
+  .bxwindow-content-busy {
+  	background-color: #e0e1e3;
+  	/* -webkit-filter: blur(5px); */
+  }
+ 
+  .bxprocess-content {
+    padding: 10px;
+  	padding-bottom: 45px;
+  }
+ 
+  .bxprocess-desc, .bxprocess-help {
+    width: 100%;
+  	white-space: normal;
+  	margin: 16px 0;
+  }
+ 
+ .bxprocess-desc {
+    font-style: italic;
+  }
+ 
+ .bxprocess-help {
+  	margin-top: 0;
+  }
+ 
+  .multirow {
+  	padding: 8px 32px 8px 10px;
+    border-bottom: 1px solid $line-border-color;
+  }
+ 
+  .multirow:hover {
+    background-color: rgba(186, 186, 186, 0.1);
+  }
+ 
+  .multirow:active {
+     background-color: rgba(125, 125, 125, 0.2);
+  }
+  
+  .multirow .v-spacing {
+  	height: 0;
+  }
+ 
+  .singlerow-content {
+   	margin: 0 0 20px 0;
+    padding: 0 3px;
+    border-color: $line-border-color;
+    border-style: solid;
+    border-radius: 6px;
+    display: block;
+  }
+ 
+  .singlerow {
+  	display: block;
+  	line-height: 42px;
+    border-bottom: 1px solid $line-border-color;
+  	padding-right: 14px;
+  }
+ 
+  .process-para-row {
+    border-bottom: none;
+  }
+ 
+  .v-slot-confirmation-button-row {
+  	text-align: end;
+  }
+ 
+  .cancel-button {
+  	color: red;
+  }
+ 
+  .ok-button {
+  	color: green;
+  }
+ 
+  .singlerow .v-slot {
+    width: 50%;
+  }
+ 
+  .bxwindow-label, .bxwindow-field {
+    width: 100%;
+    vertical-align: baseline;
+    line-height: 42px;
+  }
+ 
+  .bxwindow-field {
+    text-align: right;
+  }
+ 
+  .v-slot-bxwindow-field {
+  	vertical-align: baseline;
+    text-align: end;
+  }
+ 
+  .v-checkbox-bxwindow-field {
+ 	line-height: 19px;
+ 	width: initial;
+  }
+ 
+  .section-header {
+	margin: 0 0 8px 14px;
+    font-size: inherit;
+    font-weight: bold;
+    color: #4d4d70;
+    text-shadow: rgba(255, 255, 255, 0.75) 2px 2px 0;
+  }
+
+  .Cmandatory {
+	border: 1px solid red;
+    border-radius: 4px;
+  }
+
+  .Cerror {
+     background: #FF4A4A;
+  }
+ 
+  .singlerow .mandatory {
+	 color: red;
+  }
+
+  .singlerow .readonly {
+	 color: gray;
+  }
+
+  .bxwindow-tabs {
+     background-color: $theme-color;
+     position: fixed;
+     top: $toolbar-height;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     z-index: 100;
+     opacity: 0;
+     visibility: hidden;
+     transition: transform 300ms cubic-bezier(0.77, 0, 0.175, 1), opacity 300ms cubic-bezier(0.77, 0, 0.175, 1), visibility 300ms cubic-bezier(0.77, 0, 0.175, 1);
+  }
+ 
+  .bxwindow-tabs-active {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+  }
+ 
+  .bxtab-button {
+     border: none;
+     padding: 8px 0 8px 8px;
+     font-weight: bold;
+     background: white;
+     display: block;
+     text-align: left;
+     height: 100%;
+  }
+ 
+  .bxtab-nochild-button {
+     margin-left: 20px;
+  }
+ 
+  .v-popupview-popup-bxprocess-list {
+  	bottom: $toolbar-height;
+  	top: inherit !important;
+  	left: inherit !important;
+    right: 0;
+  }
+ 
+  .bxprocess-list-button {
+    font-weight: bold;
+    display: block;
+  }
+ 
+  .bxprocesspara-title {
+  	font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+  }
+ 
+  .bxconfirmation-dialog {
+    top: 50% !important;
+    left: 50% !important;
+    position: fixed;
+	transform: translate(-50%, -50%);
+  }
+ 
+  .v-popupview-popup-searchdialog {
+  	width: 100%;
+  	top: $toolbar-height;
+  }
+ 
+  .bxpopup-button {
+  	height: 100%;
+    text-decoration: underline;
+    color: blue;
+    background: none;
+  }
+
+}
