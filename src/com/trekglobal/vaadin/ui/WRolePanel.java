@@ -177,7 +177,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
         		setRoleSelectorListener();
         		
         		if (temp != null)
-        			replaceComponent(temp, roleSelector);
+        			content.replaceComponent(temp, roleSelector);
         	
             }
 
@@ -233,7 +233,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
             	orgSelector = getSelectList(new ArrayList<>(Arrays.asList(orgKNPairs)));
             	
         		if (temp != null)
-        			replaceComponent(temp, orgSelector);
+        			content.replaceComponent(temp, orgSelector);
             }
         }
     }
