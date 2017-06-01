@@ -34,6 +34,7 @@ public class WNavigatorUI extends UI {
 	 * 
 	 */
 	private static final long serialVersionUID = 7582342143333788115L;
+	private static final String DEFAULT_UI_PATH = "/m";
 
 	// 
 	private Navigator navigator;
@@ -118,7 +119,7 @@ public class WNavigatorUI extends UI {
     	Env.getCtx().clear();
 
     	// Close the VaadinServiceSession
-    	getPage().setLocation( "/vaadin" );
+    	getPage().setLocation(DEFAULT_UI_PATH);
         getSession().close();
     	VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
 	}
