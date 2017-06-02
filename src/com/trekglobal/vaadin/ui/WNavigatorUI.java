@@ -1,7 +1,5 @@
 package com.trekglobal.vaadin.ui;
 
-import java.util.Properties;
-
 import javax.servlet.ServletException;
 
 import org.compiere.util.DB;
@@ -11,7 +9,6 @@ import org.compiere.util.Msg;
 
 import com.trekglobal.vaadin.mobile.MobileEnv;
 import com.trekglobal.vaadin.mobile.MobileSessionCtx;
-import com.trekglobal.vaadin.mobile.MobileUtil;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Viewport;
@@ -38,7 +35,6 @@ public class WNavigatorUI extends UI {
 
 	// 
 	private Navigator navigator;
-	protected Properties cookieProps;
 	protected MobileSessionCtx wsc;
 	protected VaadinRequest request;
 
@@ -52,7 +48,7 @@ public class WNavigatorUI extends UI {
 		this.request = request;
 
 		//  Get Cookie Properties
-		cookieProps = MobileUtil.getCookieProperties(VaadinServletService.getCurrentServletRequest());
+		//cookieProps = MobileUtil.getCookieProperties(VaadinServletService.getCurrentServletRequest());
 
 		//  Create Context
 		wsc = MobileSessionCtx.get(VaadinServletService.getCurrentServletRequest());
@@ -78,7 +74,7 @@ public class WNavigatorUI extends UI {
 
 		navigator = new Navigator(this, this);
 		// Create and register the views
-		navigator.addView(WLoginPanel.NAME, new WLoginPanel(cookieProps, this));
+		navigator.addView(WLoginPanel.NAME, new WLoginPanel(wsc, this));
 	}
 
 	public void loginOk(String userName, KeyNamePair[] clientsKNPairs) {
@@ -86,7 +82,7 @@ public class WNavigatorUI extends UI {
 	}
 
 	protected void createRolePanel(String userName, KeyNamePair[] clientsKNPairs) {
-		navigator.addView(WRolePanel.NAME, new WRolePanel(wsc.ctx, this, userName, clientsKNPairs));
+		navigator.addView(WRolePanel.NAME, new WRolePanel(wsc, this, userName, clientsKNPairs));
 		navigator.navigateTo(WRolePanel.NAME);
 	}
 

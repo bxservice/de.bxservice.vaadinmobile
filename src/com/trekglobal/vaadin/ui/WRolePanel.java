@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import org.compiere.model.MRole;
 import org.compiere.model.MUser;
@@ -15,6 +14,7 @@ import org.compiere.util.Login;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 
+import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.ui.Button;
@@ -35,7 +35,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
 	private boolean initialized = false;
 	private String windowTitle ="";
 
-	private Properties ctx;
+	protected MobileSessionCtx wsc;
 
 	private WNavigatorUI loginPage;
 	protected Login login;
@@ -54,16 +54,21 @@ public class WRolePanel extends CssLayout implements IToolbarView {
 	protected KeyNamePair[]	clients;
 	private boolean roleChangedByUser = true;
 
-	public WRolePanel(Properties ctx, WNavigatorUI loginPage, String userName, KeyNamePair[] clientsKNPairs) {
+	public WRolePanel(MobileSessionCtx wsc, WNavigatorUI loginPage, String userName, KeyNamePair[] clientsKNPairs) {
 
 		this.loginPage = loginPage;
-		this.ctx = ctx;
-		this.userName = userName;    	
-		login = new Login(ctx);
+		this.wsc = wsc;
+		this.userName = userName;
 		clients = clientsKNPairs;
 		
+		initClient();
+	}
+	
+	public void initClient() {
+		login = new Login(wsc.ctx);
+		
 		if (clients.length == 1) {
-        	Env.setContext(ctx, "#AD_Client_ID", clients[0].getID());
+        	Env.setContext(wsc.ctx, "#AD_Client_ID", clients[0].getID());
         }
 	}
 	
@@ -72,7 +77,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
 		windowTitle = Msg.getMsg(Env.getCtx(), "SelectRole");
 		loginPage.getPage().setTitle(windowTitle);
 		
-    	Language language = Env.getLanguage(ctx);
+    	Language language = Env.getLanguage(wsc.ctx);
     	
     	//Header
     	header = new WHeader(this, false, false);
@@ -149,15 +154,15 @@ public class WRolePanel extends CssLayout implements IToolbarView {
 	
     private void setUserID() {
     	if (clientSelector.getSelectedItem() != null) {
-        	Env.setContext(ctx, "#AD_Client_ID", (String) clientSelector.getSelectedItem().get().getID());
+        	Env.setContext(wsc.ctx, "#AD_Client_ID", (String) clientSelector.getSelectedItem().get().getID());
     	} else {
-        	Env.setContext(ctx, "#AD_Client_ID", (String) null);
+        	Env.setContext(wsc.ctx, "#AD_Client_ID", (String) null);
     	}
-    	MUser user = MUser.get (ctx, userName);
+    	MUser user = MUser.get(wsc.ctx, userName);
     	if (user != null) {
-    		Env.setContext(ctx, "#AD_User_ID", user.getAD_User_ID());
-    		Env.setContext(ctx, "#AD_User_Name", user.getName());
-    		Env.setContext(ctx, "#SalesRep_ID", user.getAD_User_ID());
+    		Env.setContext(wsc.ctx, "#AD_User_ID", user.getAD_User_ID());
+    		Env.setContext(wsc.ctx, "#AD_User_Name", user.getName());
+    		Env.setContext(wsc.ctx, "#SalesRep_ID", user.getAD_User_ID());
     	}
     }
     
@@ -182,7 +187,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
             }
 
             //force reload of default role
-            MRole.getDefault(ctx, true);
+            MRole.getDefault(wsc.ctx, true);
             
     		// If we have only one role, we can hide the combobox - metas-2009_0021_AP1_G94
     		/*if (clients.length == 1 && roleSelector. == 1 && ! MSysConfig.getBooleanValue(MSysConfig.ALogin_ShowOneRole, true))
@@ -259,9 +264,9 @@ public class WRolePanel extends CssLayout implements IToolbarView {
 		String msg = login.loadPreferences(orgKNPair, null, null, null);
 
 		//	Don't Show Acct/Trl Tabs on HTML UI
-		Env.setContext(ctx, "#ShowAcct", "N");
-		Env.setContext(ctx, "#ShowTrl", "N");	
-		Env.setContext(ctx, "#Date", new Timestamp(System.currentTimeMillis()));    //  JDBC format
+		Env.setContext(wsc.ctx, "#ShowAcct", "N");
+		Env.setContext(wsc.ctx, "#ShowTrl", "N");	
+		Env.setContext(wsc.ctx, "#Date", new Timestamp(System.currentTimeMillis()));    //  JDBC format
 		
 		//No error on load preferences
         if (Util.isEmpty(msg)) {
@@ -269,7 +274,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
         }
         if (!Util.isEmpty(msg)) {
 			Env.getCtx().clear();
-			Notification.show(Msg.getMsg(ctx, "RoleInconsistent"),
+			Notification.show(Msg.getMsg(wsc.ctx, "RoleInconsistent"),
 					Type.ERROR_MESSAGE);
 			
 			return;
@@ -280,7 +285,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
     }
     
     private void showFillMandatoryErrorMessage(String reason) {
-		Notification.show(Msg.getMsg(ctx, "FillMandatory") + reason,
+		Notification.show(Msg.getMsg(wsc.ctx, "FillMandatory") + reason,
 				Type.ERROR_MESSAGE);
     }
 
