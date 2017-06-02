@@ -5,7 +5,6 @@ import static org.compiere.model.SystemIDs.TREE_MENUPRIMARY;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.compiere.model.MTree;
 import org.compiere.model.MTreeNode;
@@ -14,6 +13,7 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 
+import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
@@ -31,7 +31,7 @@ public class WMenuView extends CssLayout implements IToolbarView, Button.ClickLi
 	private boolean initialized = false;
 	private String windowTitle ="";
 
-	private Properties ctx;
+	protected MobileSessionCtx wsc;
 	private WNavigatorUI loginPage;
 	private Map<Button, MTreeNode> mapButtonNode = new HashMap<Button, MTreeNode>();
 	private MTreeNode currentNode;
@@ -40,9 +40,9 @@ public class WMenuView extends CssLayout implements IToolbarView, Button.ClickLi
 	private WHeader header;
 	private CssLayout content;
 
-	public WMenuView(Properties ctx, WNavigatorUI loginPage) {
+	public WMenuView(MobileSessionCtx wsc, WNavigatorUI loginPage) {
 		this.loginPage = loginPage;
-		this.ctx = ctx;
+		this.wsc = wsc;
 	}
 
 	private void initComponents() {
@@ -54,12 +54,12 @@ public class WMenuView extends CssLayout implements IToolbarView, Button.ClickLi
 		header.setLogoutButton();
 		content = new CssLayout();
 
-		int AD_Role_ID = Env.getAD_Role_ID(ctx);
+		int AD_Role_ID = Env.getAD_Role_ID(wsc.ctx);
 
 		//  Load Menu Structure     ----------------------
 		int AD_Tree_ID = getTreeId(AD_Role_ID);
 
-		MTree tree = new MTree(ctx, AD_Tree_ID, false, false, null);
+		MTree tree = new MTree(wsc.ctx, AD_Tree_ID, false, false, null);
 		//	Trim tree
 		MTreeNode root = tree.getRoot();
 		generateMenu(root);
