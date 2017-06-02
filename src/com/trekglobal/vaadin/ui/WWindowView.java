@@ -804,7 +804,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 			generateSingleRowView(true);
 		}
 		else
-			generateMultirowView(singleRowSelected);
+			generateMultirowView(true);
 	}
 
 	private void updateTabMenu() {
