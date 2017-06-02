@@ -3,7 +3,6 @@ package com.trekglobal.vaadin.ui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.util.UserPreference;
@@ -15,6 +14,7 @@ import org.compiere.util.Login;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 
+import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Responsive;
@@ -40,7 +40,7 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
     public static final String NAME = "";
 	private boolean initialized = false;
 
-	private Properties ctx;
+	protected MobileSessionCtx wsc;
 	
 	private WNavigatorUI loginPage;
 	private VerticalLayout loginForm;
@@ -57,14 +57,14 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
 	
 	protected boolean email_login = MSysConfig.getBooleanValue(MSysConfig.USE_EMAIL_FOR_LOGIN, false);
 	
-	public WLoginPanel(Properties ctx, WNavigatorUI loginPage) {
+	public WLoginPanel(MobileSessionCtx wsc, WNavigatorUI loginPage) {
 		this.loginPage = loginPage;
-		this.ctx = ctx;		
+		this.wsc = wsc;		
 	}
 	
     private void initComponents() {
 
-    	String AD_Language = ctx.getProperty(Env.LANGUAGE, Language.getAD_Language(this.getLocale()));
+    	String AD_Language = wsc.ctx.getProperty(Env.LANGUAGE, Language.getAD_Language(this.getLocale()));
 		windowTitle = Msg.getMsg(AD_Language, "Login");
 		String usrText = Msg.getMsg(AD_Language, "User");
 		if (email_login)
@@ -177,9 +177,9 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
 		Language language = new Language(tmp.getName(), tmp.getAD_Language(), tmp.getLocale(), tmp.isDecimalPoint(),
 				tmp.getDateFormat().toPattern(), tmp.getMediaSize());
 		
-    	Env.verifyLanguage(ctx, language);
-    	Env.setContext(ctx, Env.LANGUAGE, language.getAD_Language());
-    	Env.setContext(ctx, AEnv.LOCALE, language.getLocale().toString());
+    	Env.verifyLanguage(wsc.ctx, language);
+    	Env.setContext(wsc.ctx, Env.LANGUAGE, language.getAD_Language());
+    	Env.setContext(wsc.ctx, AEnv.LOCALE, language.getLocale().toString());
 
 		return language;
 	}
@@ -190,7 +190,7 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
 	 **/
 	public void validateLogin() {
 
-		Login login = new Login(ctx);
+		Login login = new Login(wsc.ctx);
 		String userId = txtUserId.getValue();
         String userPassword = pwdField.getValue();
         
@@ -203,7 +203,7 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
         {
         	String loginErrMsg = login.getLoginErrMsg();
         	if (Util.isEmpty(loginErrMsg))
-        		loginErrMsg = Msg.getMsg(ctx, "FailedLogin", true);
+        		loginErrMsg = Msg.getMsg(wsc.ctx, "FailedLogin", true);
         	
         	if (loginErrMsg != null)
     			Notification.show(loginErrMsg,
@@ -211,7 +211,7 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
         } else {
     		Language language = findLanguage(selectedLanguage);
 
-        	Env.setContext(ctx, UserPreference.LANGUAGE_NAME, language.getName()); // Elaine 2009/02/06
+        	Env.setContext(wsc.ctx, UserPreference.LANGUAGE_NAME, language.getName()); // Elaine 2009/02/06
 
             if (!login.isPasswordExpired())
             	loginPage.loginOk(userId, clients);
