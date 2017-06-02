@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.adempiere.util.ServerContext;
 import org.compiere.model.GridField;
@@ -27,6 +26,7 @@ import org.compiere.util.ValueNamePair;
 
 import com.trekglobal.vaadin.mobile.MobileLookup;
 import com.trekglobal.vaadin.mobile.MobileProcess;
+import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.trekglobal.vaadin.mobile.MobileWindow;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -68,7 +68,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 	private ArrayList<WebField> processWebFields = new ArrayList<WebField>();
 
 	private WNavigatorUI loginPage;
-	private Properties ctx;
+	protected MobileSessionCtx wsc;
 
 	/** Window Number Counter*/
 	private static int s_WindowNo  = 1;
@@ -89,16 +89,16 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 	private PopupView searchPopup;
 	private PopupView lookupPopup;
 
-	public WWindowView(Properties ctx, WNavigatorUI loginPage, int AD_Menu_ID) {
+	public WWindowView(MobileSessionCtx wsc, WNavigatorUI loginPage, int AD_Menu_ID) {
 
-		this.ctx = ctx;
+		this.wsc = wsc;
 		this.loginPage = loginPage;
 		MMenu menu = new MMenu(Env.getCtx(), AD_Menu_ID, null);
 
-		GridWindowVO mWindowVO = GridWindowVO.create(ctx, s_WindowNo++, menu.getAD_Window_ID(), AD_Menu_ID);
+		GridWindowVO mWindowVO = GridWindowVO.create(wsc.ctx, s_WindowNo++, menu.getAD_Window_ID(), AD_Menu_ID);
 		if (mWindowVO == null) {
-			String msg = Msg.translate(ctx, "AD_Window_ID") + " "
-					+ Msg.getMsg(ctx, "NotFound") + ", ID=" + menu.getAD_Window_ID() + "/" + AD_Menu_ID;
+			String msg = Msg.translate(wsc.ctx, "AD_Window_ID") + " "
+					+ Msg.getMsg(wsc.ctx, "NotFound") + ", ID=" + menu.getAD_Window_ID() + "/" + AD_Menu_ID;
 			Notification.show(msg,
 					Type.ERROR_MESSAGE);
 			return;
@@ -204,25 +204,25 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 					int dt = field.getDisplayType();
 					switch (dt) {
 					case DisplayType.Date:
-						info = DisplayType.getDateFormat(DisplayType.Date, Env.getLanguage(ctx)).format(data);
+						info = DisplayType.getDateFormat(DisplayType.Date, Env.getLanguage(wsc.ctx)).format(data);
 						break;
 					case DisplayType.DateTime:
-						info = DisplayType.getDateFormat(DisplayType.DateTime, Env.getLanguage(ctx)).format(data);							
+						info = DisplayType.getDateFormat(DisplayType.DateTime, Env.getLanguage(wsc.ctx)).format(data);							
 					case DisplayType.Amount:
-						info = DisplayType.getNumberFormat(DisplayType.Amount, Env.getLanguage(ctx)).format(data);
+						info = DisplayType.getNumberFormat(DisplayType.Amount, Env.getLanguage(wsc.ctx)).format(data);
 						break;
 					case DisplayType.Number:
 					case DisplayType.CostPrice:
-						info = DisplayType.getNumberFormat(DisplayType.Number, Env.getLanguage(ctx)).format(data);
+						info = DisplayType.getNumberFormat(DisplayType.Number, Env.getLanguage(wsc.ctx)).format(data);
 						break;
 					case DisplayType.Quantity:
-						info = DisplayType.getNumberFormat(DisplayType.Quantity, Env.getLanguage(ctx)).format(data);
+						info = DisplayType.getNumberFormat(DisplayType.Quantity, Env.getLanguage(wsc.ctx)).format(data);
 						break;
 					case DisplayType.Integer:
-						info = DisplayType.getNumberFormat(DisplayType.Integer, Env.getLanguage(ctx)).format(data);
+						info = DisplayType.getNumberFormat(DisplayType.Integer, Env.getLanguage(wsc.ctx)).format(data);
 						break;
 					case DisplayType.YesNo:
-						info = Msg.getMsg(ctx, data.toString());
+						info = Msg.getMsg(wsc.ctx, data.toString());
 						break;
 						/** @todo output formatting 2 */
 					default:
@@ -376,7 +376,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 
 	private void printCurrentTab(boolean isReadOnly) {
 		int noFields = curTab.getFieldCount();
-		MRole role = MRole.getDefault(ctx, false);
+		MRole role = MRole.getDefault(wsc.ctx, false);
 
 		singleRowSection = new CssLayout();
 		singleRowSection.addStyleName("singlerow-content");
@@ -418,7 +418,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 			} 
 			// Processes
 			else if (field.isDisplayed(true) && field.getDisplayType() == DisplayType.Button) {
-				MProcess process = new MProcess(ctx, field.getAD_Process_ID(), null);
+				MProcess process = new MProcess(wsc.ctx, field.getAD_Process_ID(), null);
 				processes.add(process);
 			}
 		}	//	for all fields
@@ -426,7 +426,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 		MToolBarButton[] toolBarButtons = MToolBarButton.getProcessButtonOfTab(curTab.getAD_Tab_ID(), null);
 		if (toolBarButtons != null && toolBarButtons.length > 0) { 
 			for (MToolBarButton button : toolBarButtons) {
-				MProcess process = new MProcess(ctx, button.getAD_Process_ID(), null);
+				MProcess process = new MProcess(wsc.ctx, button.getAD_Process_ID(), null);
 				processes.add(process);
 			}
 		}
@@ -483,7 +483,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 		 *      NAME = columnName
 		 *      ID = ID_columnName
 		 */
-		WebField wField = new WebField (this, ctx, columnName, field.getHeader(), field.getDescription(),
+		WebField wField = new WebField (this, wsc.ctx, columnName, field.getHeader(), field.getDescription(),
 				displayType, field.getFieldLength(), field.getDisplayLength(), field.isLongField(),
 				fieldRO, field.isMandatory(false), error, hasDependents, hasCallout, 
 				field.getAD_Process_ID(), field.getAD_Window_ID(), recordID, tableID, 
@@ -626,7 +626,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 
 	public void createProcessParameterPanel(MProcess process) {
 
-		ServerContext.setCurrentInstance(ctx);
+		ServerContext.setCurrentInstance(wsc.ctx);
 
 		//	need to check if Role can access
 		if (process == null)
@@ -645,7 +645,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 		int fieldNo = 0;
 		for (MProcessPara para : process.getParameters()) {
 
-			WebField wField = new WebField(this, ctx, para.getColumnName(), 
+			WebField wField = new WebField(this, wsc.ctx, para.getColumnName(), 
 					para.getName(), para.getDescription(), para.getAD_Reference_ID(), para.getFieldLength(), 
 					para.getFieldLength(), para.isMandatory(), para.getAD_Process_ID(),
 					mWindow.getWindowNo(),curTab.getRecord_ID(),curTab.getAD_Table_ID(), fieldNo++, null);
@@ -666,7 +666,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 			row.addStyleName("process-para-row");
 
 			if (para.isRange()) {
-				WebField wFieldforRange =  new WebField(this, ctx, para.getColumnName(), 
+				WebField wFieldforRange =  new WebField(this, wsc.ctx, para.getColumnName(), 
 						para.getName(), para.getDescription(), para.getAD_Reference_ID(), para.getFieldLength(), 
 						para.getFieldLength(), para.isMandatory(), para.getAD_Process_ID(),
 						mWindow.getWindowNo(),curTab.getRecord_ID(),curTab.getAD_Table_ID(), fieldNo++, 
@@ -696,7 +696,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 		okButton.addStyleName("ok-button");
 		okButton.addClickListener(e ->  {
 			parametersPopup.setPopupVisible(false);
-			MobileProcess mProcess = new MobileProcess(ctx, process);
+			MobileProcess mProcess = new MobileProcess(wsc.ctx, process);
 
 			HashMap<String, String> parameters = new HashMap<String, String>();
 
@@ -736,7 +736,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 	public void onDeleteButtonPressed() {
 		log.fine("Deleted!");
 
-		WConfirmationDialogView confirmationDialog = new WConfirmationDialogView(true, true, Msg.getMsg(Env.getLanguage(ctx), "DeleteRecord?"));
+		WConfirmationDialogView confirmationDialog = new WConfirmationDialogView(true, true, Msg.getMsg(Env.getLanguage(wsc.ctx), "DeleteRecord?"));
 		PopupView confirmationPopup = new PopupView(null, confirmationDialog);
 		confirmationPopup.addStyleName("bxconfirmation-dialog");
 
@@ -765,7 +765,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 	@Override
 	public void onSaveButtonPressed() {
 
-		MobileWindow mobileWindow = new MobileWindow(ctx, curTab);
+		MobileWindow mobileWindow = new MobileWindow(wsc.ctx, curTab);
 
 		boolean error = mobileWindow.saveRecord(webFields);
 

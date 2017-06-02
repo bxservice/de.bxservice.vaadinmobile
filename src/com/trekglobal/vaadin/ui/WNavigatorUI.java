@@ -87,12 +87,12 @@ public class WNavigatorUI extends UI {
 	}
 
 	public void loginCompleted() {
-		navigator.addView(WMenuView.NAME, new WMenuView(wsc.ctx, this));
+		navigator.addView(WMenuView.NAME, new WMenuView(wsc, this));
 		navigator.navigateTo(WMenuView.NAME);
 	}
 	
 	public void openWindow(int AD_Menu_ID) {
-		navigator.addView(WWindowView.NAME, new WWindowView(wsc.ctx, this, AD_Menu_ID));
+		navigator.addView(WWindowView.NAME, new WWindowView(wsc, this, AD_Menu_ID));
 		navigator.navigateTo(WWindowView.NAME);
 	}
 	
@@ -102,8 +102,7 @@ public class WNavigatorUI extends UI {
 	}
 	
 	public void openMainMenu() {
-		navigator.addView(WMenuView.NAME, new WMenuView(wsc.ctx, this));
-		navigator.navigateTo(WMenuView.NAME);
+		loginCompleted();
 	}
 	
 	public void onBackPressed() {
