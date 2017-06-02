@@ -798,7 +798,6 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 			lineNo = curTab.getParentTab().getCurrentRow();
 
 		setCurTab(mapButtonNode.get(event.getButton()));
-		updateTabs();
 
 		if (curTab.getTabLevel() == 0) {
 			curTab.navigate(lineNo);
