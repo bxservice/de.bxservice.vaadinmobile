@@ -10,6 +10,7 @@ import org.compiere.model.MProcessPara;
 import org.compiere.util.CLogger;
 import org.compiere.util.Msg;
 
+import com.trekglobal.vaadin.mobile.MobileLookupGenericObject;
 import com.trekglobal.vaadin.mobile.MobileProcess;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
@@ -312,7 +313,7 @@ public class WProcessView extends CssLayout implements IToolbarView, IWebFieldVi
 	}
 
 	@Override
-	public void onLookUpOK() {
+	public void onLookUpOK(MobileLookupGenericObject selectedRecord) {
 		
 	}
 

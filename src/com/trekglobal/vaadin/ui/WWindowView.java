@@ -25,6 +25,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.ValueNamePair;
 
 import com.trekglobal.vaadin.mobile.MobileLookup;
+import com.trekglobal.vaadin.mobile.MobileLookupGenericObject;
 import com.trekglobal.vaadin.mobile.MobileProcess;
 import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.trekglobal.vaadin.mobile.MobileWindow;
@@ -78,6 +79,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 	private GridTab curTab;
 	private boolean singleRowSelected = false;
 	private boolean saveError         = false;
+	private WLookupView lookupContent;
 
 	//UI
 	private WHeader   header;
@@ -868,13 +870,11 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 			isProcessLookUp = true;			
 		}
 
-		boolean isSearch = true;
-
-		MobileLookup lookup = new MobileLookup(isProcessLookUp, isProcessButtonLookUp, curTab);
-		lookup.runLookup(columnName, AD_Process_ID);
+		MobileLookup lookup = new MobileLookup(wsc, columnName, isProcessLookUp, isProcessButtonLookUp, curTab);
+		lookup.runLookup(AD_Process_ID);
 
 		//  Create Document
-		WLookupView lookupContent = new WLookupView(this, lookup, isSearch);
+		lookupContent = new WLookupView(this, lookup);
 		lookupPopup = new PopupView(null, lookupContent);
 		lookupPopup.addStyleName("searchdialog");
 		addComponent(lookupPopup);
@@ -891,13 +891,14 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 	}
 
 	@Override
-	public void onLookUpOK() {
-
+	public void onLookUpOK(MobileLookupGenericObject selectedRecord) {
+		Notification.show("Value: " + selectedRecord.getQueryValue());
+		lookupPopup.setPopupVisible(false);
 	}
 
 	@Override
 	public void onLookUpCancel() {
 		lookupPopup.setPopupVisible(false);
 	}
-
+	
 }
