@@ -16,6 +16,7 @@ import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 
+import com.trekglobal.vaadin.ui.WebField;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
@@ -27,7 +28,9 @@ public class MobileLookup {
 	
 	private String header = "";
 	private GridTab curTab;
+	private WebField webField;
 	private String columnName;
+	private int AD_Process_ID = 0;
 	private int refValueId = 0;
 	private boolean isProcessLookUp = false;
 	private boolean isProcessButtonLookUp = false;
@@ -35,15 +38,23 @@ public class MobileLookup {
 	private String[] m_searchFields;
 	private String[] m_searchLabels;
 
-	public MobileLookup(MobileSessionCtx wsc, String columnName, boolean isProcessLookUp, boolean isProcessButtonLookUp, GridTab curTab) {
-		this.isProcessLookUp = isProcessLookUp;
-		this.isProcessButtonLookUp = isProcessButtonLookUp;
+	public MobileLookup(MobileSessionCtx wsc, WebField webField, GridTab curTab) {
+
 		this.curTab = curTab;
 		this.wsc = wsc;
-		this.columnName = columnName;
+		this.webField = webField;
+
+		//  Get Mandatory Parameters
+		columnName = webField.getColumnName();
+		AD_Process_ID = webField.getProcessID();
+
+		if (AD_Process_ID > 0) {
+			isProcessButtonLookUp = true;
+			isProcessLookUp = true;
+		}
 	}
 
-	public void runLookup(int AD_Process_ID) {
+	public void runLookup() {
 
 		if (isProcessLookUp) {
 
@@ -177,7 +188,7 @@ public class MobileLookup {
 			sqlSelect = new StringBuffer("SELECT " + colKey + ", " + colDisplay /*m_HeaderSelect */+ " FROM " + tableName + " WHERE AD_Client_ID=?");
 			sqlCount = new StringBuffer("SELECT count(*) FROM " + tableName + " WHERE AD_Client_ID=?");
 
-			if (whereClause != null){
+			if (whereClause != null && curTab != null) {
 				sqlSelect.append(" AND " + Env.parseContext(wsc.ctx, curTab.getWindowNo(), whereClause, false)).append(where);
 				sqlCount.append(" AND " + Env.parseContext(wsc.ctx, curTab.getWindowNo(), whereClause, false)).append(where);
 			}
@@ -234,6 +245,17 @@ public class MobileLookup {
 	public String[] getSearchLabels() {
 		return m_searchLabels;
 	}
+	
+	public WebField getWebField() {
+		return webField;
+	}
 
+	public boolean isDataSafe() {
+		if (AD_Process_ID < 0 || columnName == null 
+				|| columnName.equals("")) 
+			return false;
+		
+		return true;
+	}
 
 }
