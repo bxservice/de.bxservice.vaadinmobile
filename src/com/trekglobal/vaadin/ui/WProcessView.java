@@ -3,15 +3,16 @@ package com.trekglobal.vaadin.ui;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
 import org.compiere.util.CLogger;
 import org.compiere.util.Msg;
 
+import com.trekglobal.vaadin.mobile.MobileLookup;
 import com.trekglobal.vaadin.mobile.MobileLookupGenericObject;
 import com.trekglobal.vaadin.mobile.MobileProcess;
+import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.ui.ContentMode;
@@ -22,6 +23,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.PopupView;
 
 public class WProcessView extends CssLayout implements IToolbarView, IWebFieldView {
 
@@ -37,20 +39,22 @@ public class WProcessView extends CssLayout implements IToolbarView, IWebFieldVi
 	private ArrayList<WebField> processWebFields = new ArrayList<WebField>();
 	
 	private WNavigatorUI loginPage;
-	private Properties ctx;
+	private MobileSessionCtx wsc;
 	
 	private MProcess process;
 	private String windowTitle;
+	private WLookupView lookupContent;
 	
 	//UI
 	private WHeader   header;
 	private CssLayout content;
-	
-	public WProcessView(Properties ctx, WNavigatorUI loginPage, int AD_Menu_ID) {
+	private PopupView lookupPopup;
 
-		this.ctx = ctx;
+	public WProcessView(MobileSessionCtx wsc, WNavigatorUI loginPage, int AD_Menu_ID) {
+
+		this.wsc = wsc;
 		this.loginPage = loginPage;
-		process = MProcess.getFromMenu (ctx, AD_Menu_ID);
+		process = MProcess.getFromMenu (wsc.ctx, AD_Menu_ID);
 		
 		if (process == null) {
 			Notification.show("Process not found",
@@ -168,7 +172,7 @@ public class WProcessView extends CssLayout implements IToolbarView, IWebFieldVi
 			
 			int fieldNo = 0;
 			for (MProcessPara para : process.getParameters()) {
-				WebField wField = new WebField(this, ctx, para.getColumnName(), 
+				WebField wField = new WebField(this, wsc.ctx, para.getColumnName(), 
 						para.get_Translation("Name"), para.get_Translation("Description"),
 						para.getAD_Reference_ID(), para.getFieldLength(), para.getFieldLength(),
 						para.isMandatory(), para.getAD_Process_ID(),0,0,0,
@@ -193,7 +197,7 @@ public class WProcessView extends CssLayout implements IToolbarView, IWebFieldVi
 				processWebFields.add(wField);
 
 				if (para.isRange()) {
-					WebField wFieldforRange = new WebField(this, ctx, para.getColumnName(), 
+					WebField wFieldforRange = new WebField(this, wsc.ctx, para.getColumnName(), 
 							para.getName(), para.getDescription(), para.getAD_Reference_ID(), 
 							para.getFieldLength(),para.getFieldLength(), para.isMandatory(), 
 							para.getAD_Process_ID(),0,0,0, fieldNo++, para.getColumnName()+"_2");
@@ -217,14 +221,14 @@ public class WProcessView extends CssLayout implements IToolbarView, IWebFieldVi
 
 			//	Submit
 			String text = "Submit";
-			if (ctx != null)
-				text = Msg.getMsg(ctx, "submit");
+			if (wsc.ctx != null)
+				text = Msg.getMsg(wsc.ctx, "submit");
 
 			Button submitButton = new Button(text);
 			submitButton.addStyleName("bx-loginbutton");
 			
 			submitButton.addClickListener(e -> {
-				MobileProcess mProcess = new MobileProcess(ctx, process);
+				MobileProcess mProcess = new MobileProcess(wsc.ctx, process);
 
 				HashMap<String, String> parameters = new HashMap<String, String>();
 
@@ -310,11 +314,37 @@ public class WProcessView extends CssLayout implements IToolbarView, IWebFieldVi
 
 	@Override
 	public void onLookUp(WebField webField) {
+		MobileLookup lookup = new MobileLookup(wsc, webField, null);
+
+		if (!lookup.isDataSafe()) {
+			Notification.show("ParameterMissing",
+					Type.ERROR_MESSAGE);
+			return;
+		}
+
+		lookup.runLookup();
+
+		//  Create Document
+		lookupContent = new WLookupView(this, lookup);
+		lookupPopup = new PopupView(null, lookupContent);
+		lookupPopup.addStyleName("searchdialog");
+		addComponent(lookupPopup);
+
+		lookupPopup.addPopupVisibilityListener(event -> {
+			if (event.isPopupVisible())
+				content.addStyleName("bxwindow-content-busy");
+			else {
+				content.removeStyleName("bxwindow-content-busy");
+			}
+		});
+
+		lookupPopup.setPopupVisible(!lookupPopup.isPopupVisible());
 	}
 
 	@Override
 	public void onLookUpOK(MobileLookupGenericObject selectedRecord) {
-		
+		Notification.show("Value: " + selectedRecord.getQueryValue());
+		lookupPopup.setPopupVisible(false);
 	}
 
 	@Override

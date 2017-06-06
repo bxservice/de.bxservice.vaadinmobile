@@ -97,7 +97,7 @@ public class WNavigatorUI extends UI {
 	}
 	
 	public void openProcessWindow(int AD_Menu_ID) {
-		navigator.addView(WProcessView.NAME, new WProcessView(wsc.ctx, this, AD_Menu_ID));
+		navigator.addView(WProcessView.NAME, new WProcessView(wsc, this, AD_Menu_ID));
 		navigator.navigateTo(WProcessView.NAME);
 	}
 	

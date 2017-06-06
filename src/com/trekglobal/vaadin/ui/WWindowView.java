@@ -850,28 +850,16 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 
 	@Override
 	public void onLookUp(WebField webField) {
-		//  Get Mandatory Parameters
-		String columnName = webField.getColumnName();
 
-		int AD_Process_ID = webField.getProcessID();
+		MobileLookup lookup = new MobileLookup(wsc, webField, curTab);
 
-		if (AD_Process_ID < 0 || columnName == null 
-				|| columnName.equals("")) {
+		if (!lookup.isDataSafe()) {
 			Notification.show("ParameterMissing",
 					Type.ERROR_MESSAGE);
 			return;
 		}
 
-		boolean isProcessLookUp = false;
-		boolean isProcessButtonLookUp = false;
-
-		if (AD_Process_ID > 0) {
-			isProcessButtonLookUp = true;
-			isProcessLookUp = true;			
-		}
-
-		MobileLookup lookup = new MobileLookup(wsc, columnName, isProcessLookUp, isProcessButtonLookUp, curTab);
-		lookup.runLookup(AD_Process_ID);
+		lookup.runLookup();
 
 		//  Create Document
 		lookupContent = new WLookupView(this, lookup);
