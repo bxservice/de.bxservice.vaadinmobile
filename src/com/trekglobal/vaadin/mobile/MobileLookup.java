@@ -71,7 +71,7 @@ public class MobileLookup {
 			if ( para !=null )
 				refValueId = para.getAD_Reference_Value_ID();
 
-			header = para.getColumnName();
+			header = para.getName();
 		}
 		//Lookup called from a window
 		else {
