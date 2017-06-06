@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.compiere.model.GridField;
@@ -22,23 +23,27 @@ public class MobileLookup {
 
 	/**	Logger			*/
 	protected CLogger log = CLogger.getCLogger(getClass());
+	private MobileSessionCtx wsc;
+	
 	private String header = "";
 	private GridTab curTab;
+	private String columnName;
+	private int refValueId = 0;
 	private boolean isProcessLookUp = false;
 	private boolean isProcessButtonLookUp = false;
+	private boolean mandatory = false;
 	private String[] m_searchFields;
 	private String[] m_searchLabels;
 
-	public MobileLookup(boolean isProcessLookUp, boolean isProcessButtonLookUp, GridTab curTab) {
+	public MobileLookup(MobileSessionCtx wsc, String columnName, boolean isProcessLookUp, boolean isProcessButtonLookUp, GridTab curTab) {
 		this.isProcessLookUp = isProcessLookUp;
 		this.isProcessButtonLookUp = isProcessButtonLookUp;
 		this.curTab = curTab;
+		this.wsc = wsc;
+		this.columnName = columnName;
 	}
 
-	public void runLookup(String columnName, int AD_Process_ID) {
-		int refValueId = 0;
-		boolean startUpdate = false;
-		String targetBase = "'" + columnName;
+	public void runLookup(int AD_Process_ID) {
 
 		if (isProcessLookUp) {
 
@@ -53,7 +58,7 @@ public class MobileLookup {
 			}
 
 			if ( para !=null )
-				refValueId= para.getAD_Reference_Value_ID();
+				refValueId = para.getAD_Reference_Value_ID();
 
 			header = para.getColumnName();
 		}
@@ -76,18 +81,18 @@ public class MobileLookup {
 			boolean hasDependents = curTab.hasDependants(columnName);
 			boolean hasCallout = mField.getCallout().length() > 0;
 
-			startUpdate = hasDependents || hasCallout;
+			mandatory = hasDependents || hasCallout;
 
 			refValueId = mField.getAD_Reference_Value_ID();
 		}
 
 
 		if (m_searchFields == null || m_searchFields.length == 0) {
-			getSearchFields(columnName, refValueId);
+			setSearchFields();
 		}
 	}
 
-	private void getSearchFields(String columnName, int refValueId) {
+	private void setSearchFields() {
 
 		String sqlSelect = null;
 
@@ -129,6 +134,95 @@ public class MobileLookup {
 		m_searchLabels = names.toArray(new String[names.size()]);
 	}
 
+	public List<MobileLookupGenericObject> getLookupRows(String where) {
+		List<MobileLookupGenericObject> rows = new ArrayList<MobileLookupGenericObject>();
+
+		StringBuffer sqlSelect = null;
+		StringBuffer sqlCount = null;
+		String sql = null;
+		String colKey = null;
+		String colDisplay = null;
+
+		if (refValueId > 0) {
+			sql = "SELECT AD_Table_ID, AD_Key, AD_Display, WhereClause, OrderByClause FROM AD_Ref_Table WHERE AD_Reference_ID = " + refValueId;
+
+			int tableID = 0;
+
+			String whereClause = null;
+			String orderBy = null;
+
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try {
+				pstmt = DB.prepareStatement(sql.toString(), null);
+				rs = pstmt.executeQuery();
+
+				if (rs.next()) {
+					tableID = rs.getInt(1);
+					whereClause = rs.getString(4);
+					orderBy = rs.getString(5);
+					sql="Select ColumnName FROM AD_Column Where AD_Column_ID = ? AND AD_Table_ID = " + tableID;
+					colKey = DB.getSQLValueString(null, sql, rs.getInt(2));
+					colDisplay = DB.getSQLValueString(null, sql, rs.getInt(3));
+				}
+			} catch (SQLException e) {
+				log.log(Level.SEVERE, sql.toString(), e);
+			} finally {
+				DB.close(rs, pstmt);
+				rs = null; pstmt = null;
+			}
+
+			sql = "Select TableName FROM AD_Table Where AD_Table_ID = ?";
+			String tableName = DB.getSQLValueString(null, sql , tableID);
+			sqlSelect = new StringBuffer("SELECT " + colKey + ", " + colDisplay /*m_HeaderSelect */+ " FROM " + tableName + " WHERE AD_Client_ID=?");
+			sqlCount = new StringBuffer("SELECT count(*) FROM " + tableName + " WHERE AD_Client_ID=?");
+
+			if (whereClause != null){
+				sqlSelect.append(" AND " + Env.parseContext(wsc.ctx, curTab.getWindowNo(), whereClause, false)).append(where);
+				sqlCount.append(" AND " + Env.parseContext(wsc.ctx, curTab.getWindowNo(), whereClause, false)).append(where);
+			}
+			if (orderBy != null)
+				sqlSelect.append(" ORDER BY " + orderBy);
+		} else {
+			//Fill inititially with headers[0]
+			colDisplay = m_searchFields[0];
+			sqlSelect=new StringBuffer("SELECT " + columnName + ", " + colDisplay /*m_HeaderSelect */ + " FROM " + columnName.replace("_ID", "") + " WHERE AD_Client_ID=?");
+			sqlCount=new StringBuffer("SELECT count(*) FROM " + columnName.replace("_ID", "") + " WHERE AD_Client_ID=?");
+
+			sqlSelect.append(where);
+			sqlCount.append(where);
+			colKey = columnName;
+			/*if (m_HeaderSelect.toString().contains("Name"))
+				colDisplay="Name";
+			else
+				colDisplay="Description";*/
+		}
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			pstmt = DB.prepareStatement(sqlSelect.toString(),
+					ResultSet.TYPE_SCROLL_INSENSITIVE,	ResultSet.CONCUR_READ_ONLY, null);
+
+			pstmt.setInt(1, Env.getAD_Client_ID(wsc.ctx));
+			rs = pstmt.executeQuery();
+
+			MobileLookupGenericObject object;
+			while (rs.next()) {
+				object = new MobileLookupGenericObject();
+				object.setId(rs.getInt(colKey));
+				object.setQueryValue(rs.getString(colDisplay));
+				rows.add(object);
+			}
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, sql.toString(), e);
+		} finally {
+			DB.close(rs, pstmt);
+			rs = null; 
+			pstmt = null;
+		}
+		return rows;
+	}
+
 	public String getHeader() {
 		return header;
 	}
@@ -140,6 +234,6 @@ public class MobileLookup {
 	public String[] getSearchLabels() {
 		return m_searchLabels;
 	}
-	
-	
+
+
 }
