@@ -30,7 +30,7 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class WLoginPanel extends CssLayout implements IToolbarView {
+public class WLoginPanel extends AbstractToolbarView {
 
 	/**
 	 * 
@@ -38,11 +38,7 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
 	private static final long serialVersionUID = 6809008316849723519L;
 	
     public static final String NAME = "";
-	private boolean initialized = false;
 
-	protected MobileSessionCtx wsc;
-	
-	private WNavigatorUI loginPage;
 	private VerticalLayout loginForm;
 	private String selectedLanguage = "";
 	private Label languageLabel;
@@ -50,19 +46,14 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
 	private PasswordField pwdField;
 	private NativeSelect<String> languageSelector;
 	private Button okButton;
-	private WHeader header;
-	private CssLayout content;
-	
-	private String windowTitle ="";
 	
 	protected boolean email_login = MSysConfig.getBooleanValue(MSysConfig.USE_EMAIL_FOR_LOGIN, false);
 	
 	public WLoginPanel(MobileSessionCtx wsc, WNavigatorUI loginPage) {
-		this.loginPage = loginPage;
-		this.wsc = wsc;		
+		super(wsc, loginPage);
 	}
 	
-    private void initComponents() {
+	protected void initComponents() {
 
     	String AD_Language = wsc.ctx.getProperty(Env.LANGUAGE, Language.getAD_Language(this.getLocale()));
 		windowTitle = Msg.getMsg(AD_Language, "Login");
@@ -141,16 +132,14 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
 
     }
     
-    private void init() {
+	protected void init() {
     	createUI();
     	
     	okButton.addClickListener(e -> validateLogin());
-    	
 		languageSelector.addValueChangeListener(event -> languageChanged(event.getValue()));
     }
     
 	protected void createUI() {
-		
 		setWidth("100%");
 
 		// Enable Responsive CSS selectors for the component
@@ -224,27 +213,7 @@ public class WLoginPanel extends CssLayout implements IToolbarView {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		
-		//Avoid problem of double initialization
-	    if (initialized)
-	        return;
-	    
-        initComponents();
-        init();
-        initialized = true;
-	}
-
-	@Override
-	public void onLeftButtonPressed() {
-	}
-
-	@Override
-	public void onRightButtonPressed() {
-	}
-
-	@Override
-	public String getWindowTitle() {
-		return windowTitle;
+		initView();
 	}
 
 }

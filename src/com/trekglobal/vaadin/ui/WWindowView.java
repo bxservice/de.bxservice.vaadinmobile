@@ -24,8 +24,6 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.ValueNamePair;
 
-import com.trekglobal.vaadin.mobile.MobileLookup;
-import com.trekglobal.vaadin.mobile.MobileLookupGenericObject;
 import com.trekglobal.vaadin.mobile.MobileProcess;
 import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.trekglobal.vaadin.mobile.MobileWindow;
@@ -45,8 +43,8 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
 
-public class WWindowView extends CssLayout implements IToolbarView, LayoutClickListener, 
-IFooterView, IFindView, IWebFieldView, Button.ClickListener {
+public class WWindowView extends AbstractWebFieldView implements LayoutClickListener, IFooterView, 
+IFindView, Button.ClickListener {
 
 	/**
 	 * 
@@ -58,18 +56,13 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 
 	/** Error Indicator                     */
 	public static final String NAME = "WWindow";
-	private boolean initialized = false;
 	private static final int    MAX_LINES   = 999999999;
-	private String windowTitle ="";
 
 	private Map<VerticalLayout, Integer> mapRowLine = new HashMap<VerticalLayout, Integer>();
 	private Map<Button, GridTab> mapButtonNode = new HashMap<Button, GridTab>();
 	private ArrayList<WebField> webFields = new ArrayList<WebField>();
 	private ArrayList<MProcess> processes = new ArrayList<MProcess>();
 	private ArrayList<WebField> processWebFields = new ArrayList<WebField>();
-
-	private WNavigatorUI loginPage;
-	protected MobileSessionCtx wsc;
 
 	/** Window Number Counter*/
 	private static int s_WindowNo  = 1;
@@ -79,22 +72,16 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 	private GridTab curTab;
 	private boolean singleRowSelected = false;
 	private boolean saveError         = false;
-	private WLookupView lookupContent;
 
 	//UI
-	private WHeader   header;
-	private CssLayout content;
 	private CssLayout singleRowSection;
 	private WFooter   footer;
 	private VerticalLayout tabs;
 	private PopupView processPopup;
 	private PopupView searchPopup;
-	private PopupView lookupPopup;
 
 	public WWindowView(MobileSessionCtx wsc, WNavigatorUI loginPage, int AD_Menu_ID) {
-
-		this.wsc = wsc;
-		this.loginPage = loginPage;
+		super(wsc, loginPage);
 		MMenu menu = new MMenu(Env.getCtx(), AD_Menu_ID, null);
 
 		GridWindowVO mWindowVO = GridWindowVO.create(wsc.ctx, s_WindowNo++, menu.getAD_Window_ID(), AD_Menu_ID);
@@ -110,7 +97,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 		setCurTab(mWindow.getTab(0));
 	}
 
-	private void initComponents() {
+	protected void initComponents() {
 
 		windowTitle = curTab.getName();
 		loginPage.getPage().setTitle(windowTitle);
@@ -313,15 +300,11 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 		}
 	}
 
-	private void init() {
+	protected void init() {
 		updateHeader();
 		header.setBackButton();
 
 		createUI();
-	}
-
-	public void openMenu() {
-		loginPage.openMainMenu();
 	}
 
 	private void createUI() {
@@ -334,13 +317,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		//Avoid problem of double initialization
-		if (initialized)
-			return;
-
-		initComponents();
-		init();
-		initialized = true;
+		initView();
 	}
 
 	@Override
@@ -525,7 +502,7 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 				curTab.navigate(lineNo);
 				generateSingleRowView(true);
 			} else
-				loginPage.onBackPressed();
+				backButton();
 		}
 	}
 
@@ -535,11 +512,6 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 			openMenu();
 		} else
 			updateTabMenu();
-	}
-
-	@Override
-	public String getWindowTitle() {
-		return windowTitle;
 	}
 
 	@Override
@@ -844,49 +816,8 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 	}
 
 	@Override
-	public void onLocationLookUp(WebField webField) {
-
-	}
-
-	@Override
-	public void onLookUp(WebField webField) {
-
-		MobileLookup lookup = new MobileLookup(wsc, webField, curTab);
-
-		if (!lookup.isDataSafe()) {
-			Notification.show("ParameterMissing",
-					Type.ERROR_MESSAGE);
-			return;
-		}
-
-		lookup.runLookup();
-
-		//  Create Document
-		lookupContent = new WLookupView(this, lookup);
-		lookupPopup = new PopupView(null, lookupContent);
-		lookupPopup.addStyleName("searchdialog");
-		addComponent(lookupPopup);
-
-		lookupPopup.addPopupVisibilityListener(event -> {
-			if (event.isPopupVisible())
-				content.addStyleName("bxwindow-content-busy");
-			else {
-				content.removeStyleName("bxwindow-content-busy");
-			}
-		});
-
-		lookupPopup.setPopupVisible(!lookupPopup.isPopupVisible());
-	}
-
-	@Override
-	public void onLookUpOK(WebField webField, MobileLookupGenericObject selectedRecord) {
-		webField.setNewValue(String.valueOf(selectedRecord.getId()), selectedRecord.getQueryValue());
-		lookupPopup.setPopupVisible(false);
-	}
-
-	@Override
-	public void onLookUpCancel() {
-		lookupPopup.setPopupVisible(false);
+	public GridTab getCurTab() {
+		return curTab;
 	}
 	
 }

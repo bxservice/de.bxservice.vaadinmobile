@@ -24,7 +24,7 @@ import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
-public class WRolePanel extends CssLayout implements IToolbarView {
+public class WRolePanel extends AbstractToolbarView {
 
 	/**
 	 * 
@@ -32,16 +32,9 @@ public class WRolePanel extends CssLayout implements IToolbarView {
 	private static final long serialVersionUID = 3524898093282885838L;
 	
     public static final String NAME = "WRole";
-	private boolean initialized = false;
-	private String windowTitle ="";
 
-	protected MobileSessionCtx wsc;
-
-	private WNavigatorUI loginPage;
 	protected Login login;
 
-	private WHeader header;
-	private CssLayout content;
 	private Label clientLabel;
 	private Label roleLabel;
 	private Label orgLabel;
@@ -55,9 +48,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
 	private boolean roleChangedByUser = true;
 
 	public WRolePanel(MobileSessionCtx wsc, WNavigatorUI loginPage, String userName, KeyNamePair[] clientsKNPairs) {
-
-		this.loginPage = loginPage;
-		this.wsc = wsc;
+		super(wsc, loginPage);
 		this.userName = userName;
 		clients = clientsKNPairs;
 		
@@ -72,7 +63,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
         }
 	}
 	
-	private void initComponents() {
+	protected void initComponents() {
 
 		windowTitle = Msg.getMsg(Env.getCtx(), "SelectRole");
 		loginPage.getPage().setTitle(windowTitle);
@@ -128,7 +119,7 @@ public class WRolePanel extends CssLayout implements IToolbarView {
 		content.addComponent(okButton);
 	}
 	
-	private void init() {
+	protected void init() {
 		createUI();
 		
 		clientSelector.addValueChangeListener(event ->  {
@@ -291,27 +282,6 @@ public class WRolePanel extends CssLayout implements IToolbarView {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-
-		//Avoid problem of double initialization
-	    if (initialized)
-	        return;
-	    
-		initComponents();
-		init();
-		initialized = true;
+		initView();
 	}
-
-	@Override
-	public void onLeftButtonPressed() {		
-	}
-
-	@Override
-	public void onRightButtonPressed() {
-	}
-
-	@Override
-	public String getWindowTitle() {
-		return windowTitle;
-	}
-
 }
