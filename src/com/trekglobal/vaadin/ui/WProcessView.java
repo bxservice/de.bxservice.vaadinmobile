@@ -342,7 +342,7 @@ public class WProcessView extends CssLayout implements IToolbarView, IWebFieldVi
 	}
 
 	@Override
-	public void onLookUpOK(MobileLookupGenericObject selectedRecord) {
+	public void onLookUpOK(WebField webField, MobileLookupGenericObject selectedRecord) {
 		Notification.show("Value: " + selectedRecord.getQueryValue());
 		lookupPopup.setPopupVisible(false);
 	}
