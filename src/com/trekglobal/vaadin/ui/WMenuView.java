@@ -21,31 +21,22 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 
-public class WMenuView extends CssLayout implements IToolbarView, Button.ClickListener {
+public class WMenuView extends AbstractToolbarView implements Button.ClickListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2917601740376013906L;
 	public static final String NAME = "WMenu";
-	private boolean initialized = false;
-	private String windowTitle ="";
 
-	protected MobileSessionCtx wsc;
-	private WNavigatorUI loginPage;
 	private Map<Button, MTreeNode> mapButtonNode = new HashMap<Button, MTreeNode>();
 	private MTreeNode currentNode;
 	
-	//UI
-	private WHeader header;
-	private CssLayout content;
-
 	public WMenuView(MobileSessionCtx wsc, WNavigatorUI loginPage) {
-		this.loginPage = loginPage;
-		this.wsc = wsc;
+		super(wsc, loginPage);
 	}
 
-	private void initComponents() {
+	protected void initComponents() {
 
 		windowTitle = Util.cleanAmp(Msg.getMsg(Env.getCtx(),"Menu"));
 		loginPage.getPage().setTitle(windowTitle);
@@ -116,7 +107,7 @@ public class WMenuView extends CssLayout implements IToolbarView, Button.ClickLi
         }
     }
 
-	private void init() {
+    protected void init() {
 		createUI();
 	}
 
@@ -145,21 +136,10 @@ public class WMenuView extends CssLayout implements IToolbarView, Button.ClickLi
 			header.hideLeftButton();
 		}
 	}
-	
-	public void logout() {
-		loginPage.logout();
-	}
 
 	@Override
-	public void enter(ViewChangeEvent event) {
-		
-		//Avoid problem of double initialization
-	    if (initialized)
-	        return;
-	    
-		initComponents();
-		init();
-		initialized = true;
+	public void enter(ViewChangeEvent event) {		
+		initView();
 	}
 
 	@Override
@@ -189,11 +169,6 @@ public class WMenuView extends CssLayout implements IToolbarView, Button.ClickLi
 			regenerateMenu((MTreeNode) currentNode.getRoot());
 		else
 			logout();
-	}
-
-	@Override
-	public String getWindowTitle() {
-		return windowTitle;
 	}
 
 }
