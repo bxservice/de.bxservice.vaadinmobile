@@ -1052,7 +1052,19 @@ public class WebField {
 	public String getProcessParaKey() {
 		return m_processParaKey;
 	}
+		
+	public void setNewValue(String newValue) {
+		this.newValue = newValue;
+	}
 	
+	public void setNewValue(String newValue, String dataDisplay) {
+		this.newValue = newValue;
+		if (componentField != null && !m_readOnly) {
+			if (componentField instanceof Button)
+				((Button) componentField).setCaption(dataDisplay);
+		}
+	}
+
 	public String getNewValue() {
 		if (componentField != null && !m_readOnly) {
 			if (componentField instanceof Link)

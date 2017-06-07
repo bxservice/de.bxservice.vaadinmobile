@@ -6,7 +6,7 @@ public interface IWebFieldView {
 
 	void onLocationLookUp(WebField webField);
 	void onLookUp(WebField webField);
-	void onLookUpOK(MobileLookupGenericObject selectedRecord);
+	void onLookUpOK(WebField webField, MobileLookupGenericObject selectedRecord);
 	void onLookUpCancel();
 	
 }

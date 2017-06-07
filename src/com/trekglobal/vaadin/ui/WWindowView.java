@@ -879,8 +879,8 @@ IFooterView, IFindView, IWebFieldView, Button.ClickListener {
 	}
 
 	@Override
-	public void onLookUpOK(MobileLookupGenericObject selectedRecord) {
-		Notification.show("Value: " + selectedRecord.getQueryValue());
+	public void onLookUpOK(WebField webField, MobileLookupGenericObject selectedRecord) {
+		webField.setNewValue(String.valueOf(selectedRecord.getId()), selectedRecord.getQueryValue());
 		lookupPopup.setPopupVisible(false);
 	}
 

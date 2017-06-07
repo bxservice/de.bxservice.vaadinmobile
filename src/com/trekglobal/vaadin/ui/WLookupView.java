@@ -105,7 +105,7 @@ public class WLookupView  extends VerticalLayout {
 		resultList.setItems(results);
 		resultList.addColumn(MobileLookupGenericObject::getQueryValue).setCaption(lookup.getSearchLabels()[0]);
 		
-		resultList.addItemClickListener(event -> parentView.onLookUpOK(event.getItem()));
+		resultList.addItemClickListener(event -> parentView.onLookUpOK(lookup.getWebField(), event.getItem()));
         
 		resultList.setSizeFull();
         
