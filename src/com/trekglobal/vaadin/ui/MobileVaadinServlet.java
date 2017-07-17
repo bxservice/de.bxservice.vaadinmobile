@@ -1,13 +1,7 @@
 package com.trekglobal.vaadin.ui;
 
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinServlet;
 
-@WebServlet(urlPatterns = {"/*", "/VAADIN/*"},
-asyncSupported = true)
-@VaadinServletConfiguration(ui=WNavigatorUI.class, productionMode=false)
 public class MobileVaadinServlet extends VaadinServlet {
 
 	/**
