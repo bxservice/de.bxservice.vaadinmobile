@@ -35,8 +35,6 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.logging.Level;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -766,17 +764,6 @@ public final class MobileUtil
 	{
 		if (email == null || email.length () == 0)
 			return false;
-		try
-		{
-			InternetAddress ia = new InternetAddress (email, true);
-			if (ia != null)
-				return true;
-		}
-		catch (AddressException ex)
-		{
-			log.warning (email + " - "
-				+ ex.getLocalizedMessage ());
-		}
 		return false;
 	}	//	isEmailValid
 
