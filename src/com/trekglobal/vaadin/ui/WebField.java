@@ -51,6 +51,7 @@ import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Component.Focusable;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
@@ -1057,6 +1058,11 @@ public class WebField {
 			if (componentField instanceof Button)
 				((Button) componentField).setCaption(dataDisplay);
 		}
+	}
+	
+	public void focus() {
+		if (componentField instanceof Focusable)
+			((Focusable) componentField).focus();
 	}
 
 	public String getNewValue() {
