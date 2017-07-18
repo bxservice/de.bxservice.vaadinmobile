@@ -84,7 +84,8 @@ IFindView, Button.ClickListener {
 		super(wsc, loginPage);
 		MMenu menu = new MMenu(Env.getCtx(), AD_Menu_ID, null);
 
-		GridWindowVO mWindowVO = GridWindowVO.create(wsc.ctx, s_WindowNo++, menu.getAD_Window_ID(), AD_Menu_ID);
+		//TODO: Change to menu.getAD_Window_ID() instead of 0 when the ctx is fixed
+		GridWindowVO mWindowVO = GridWindowVO.create(wsc.ctx, s_WindowNo++, 0, AD_Menu_ID);
 		if (mWindowVO == null) {
 			String msg = Msg.translate(wsc.ctx, "AD_Window_ID") + " "
 					+ Msg.getMsg(wsc.ctx, "NotFound") + ", ID=" + menu.getAD_Window_ID() + "/" + AD_Menu_ID;
@@ -94,6 +95,7 @@ IFindView, Button.ClickListener {
 		}
 
 		mWindow = new GridWindow(mWindowVO);
+		Env.setContext(wsc.ctx, s_WindowNo, "IsSOTrx", mWindow.isSOTrx());
 		setCurTab(mWindow.getTab(0));
 	}
 
