@@ -1,11 +1,14 @@
 package com.trekglobal.vaadin.ui;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.adempiere.util.ServerContext;
+import org.compiere.model.DataStatusEvent;
+import org.compiere.model.DataStatusListener;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.model.GridWindow;
@@ -22,6 +25,7 @@ import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.compiere.util.Util;
 import org.compiere.util.ValueNamePair;
 
 import com.trekglobal.vaadin.mobile.MobileProcess;
@@ -44,7 +48,7 @@ import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
 
 public class WWindowView extends AbstractWebFieldView implements LayoutClickListener, IFooterView, 
-IFindView, Button.ClickListener {
+IFindView, Button.ClickListener, DataStatusListener {
 
 	/**
 	 * 
@@ -117,6 +121,7 @@ IFindView, Button.ClickListener {
 		curTab = tab;
 		mWindow.initTab(curTab.getTabNo());
 		curTab.query(mWindow.isTransaction());
+		curTab.addDataStatusListener(this);
 	}
 
 	private void generateMultirowView(boolean repaint) {
@@ -752,8 +757,12 @@ IFindView, Button.ClickListener {
 		}
 
 		//  save it - of errors ignore changes
-		if (!curTab.dataSave(true))
-			curTab.dataIgnore();
+		if (!curTab.dataSave(true)) {
+			//curTab.dataIgnore();
+			saveError = true;
+			generateSingleRowView(false);
+			return;
+		}
 		log.fine("done");
 
 		generateSingleRowView(true);
@@ -831,6 +840,82 @@ IFindView, Button.ClickListener {
 			mobileWindow.saveRecord(webFields, field);
 			generateSingleRowView(false);
 		}
+	}
+
+	@Override
+	public void dataStatusChanged(DataStatusEvent e) {
+        //  Set Message / Info
+		if (e.getAD_Message() != null || e.getInfo() != null) {
+			StringBuilder sb = new StringBuilder();
+			String msg = e.getMessage();
+			StringBuilder adMessage = new StringBuilder();
+			String origmsg = null;
+			if (msg != null && msg.length() > 0) {
+				origmsg = Msg.getMsg(Env.getCtx(), e.getAD_Message());
+				adMessage.append(origmsg);
+			}
+			String info = e.getInfo();
+			if (info != null && info.length() > 0) {
+				Object[] arguments = info.split("[;]");
+				int index = 0;
+				while(index < arguments.length) {
+					String expr = "{"+index+"}";
+					if (adMessage.indexOf(expr) >= 0) {
+						index++;
+					} else {
+						break;
+					}
+				} if (index < arguments.length) {
+					if (adMessage.length() > 0 && !adMessage.toString().trim().endsWith(":"))
+						adMessage.append(": ");
+					StringBuilder tail = new StringBuilder();
+					while(index < arguments.length) {
+						if (tail.length() > 0) tail.append(", ");
+						tail.append("{").append(index).append("}");
+						index++;
+					}
+					adMessage.append(tail);
+				}
+				if (arguments.length == 1 
+						&& origmsg != null 
+						&& origmsg.equals(arguments[0])) { // check dup message
+					sb.append(origmsg);
+				} else {
+					String adMessageQuot = Util.replace(adMessage.toString(), "'", "''");
+					sb.append(MessageFormat.format(adMessageQuot, arguments));
+				}
+			} else {
+				sb.append(adMessage);
+			}
+
+			if (sb.length() > 0) {
+				int pos = sb.indexOf("\n");
+				if (pos != -1 && pos+1 < sb.length())  // replace CR/NL
+				{
+					sb.replace(pos, pos+1, " - ");
+				}
+				
+				Type messageType = Type.HUMANIZED_MESSAGE;
+				if (e.isError()) {
+					messageType = Type.ERROR_MESSAGE;
+				}
+				
+				Notification.show(sb.toString(), messageType);
+			}
+		}
+		
+		//  Confirm Error
+        if (e.isError() && !e.isConfirmed()) {
+        	//focus to error field
+        	/*GridField[] fields = curTab.getFields();
+        	for (GridField field : fields) {
+        		if (field.isError()) {
+        			setFocus(field);
+        			break;
+        		}
+        	}*/
+            e.setConfirmed(true);   //  show just once - if MTable.setCurrentRow is involved the status event is re-issued
+        }
 	}
 	
 }
