@@ -741,7 +741,7 @@ IFindView, Button.ClickListener {
 
 		MobileWindow mobileWindow = new MobileWindow(wsc.ctx, curTab);
 
-		boolean error = mobileWindow.saveRecord(webFields);
+		boolean error = mobileWindow.saveRecord(webFields, null);
 
 		if (error) {
 			saveError = true;
@@ -818,6 +818,17 @@ IFindView, Button.ClickListener {
 	@Override
 	public GridTab getCurTab() {
 		return curTab;
+	}
+
+	@Override
+	public void onChange(WebField webField) {
+		GridField field = webField.getGridField();
+		
+		if (!field.getCallout().isEmpty()) {
+			MobileWindow mobileWindow = new MobileWindow(wsc.ctx, curTab);
+			mobileWindow.saveRecord(webFields, field);
+			generateSingleRowView(false);
+		}
 	}
 	
 }
