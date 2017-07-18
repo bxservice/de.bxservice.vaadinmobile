@@ -47,7 +47,7 @@ import org.compiere.util.Util;
 import org.compiere.util.ValueNamePair;
 
 import com.vaadin.server.ExternalResource;
-import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
@@ -392,7 +392,7 @@ public class WebField {
 		if (m_readOnly)
 			return getDiv(data);
 
-		Component text;
+		AbstractTextField text;
 		if (rows == 1) {
 			text = new TextField();
 			((TextField) text).setValue(data);
@@ -409,7 +409,7 @@ public class WebField {
 		else if (m_mandatory)
 			text.setStyleName(C_MANDATORY);
 		if (m_hasDependents || m_hasCallout)
-			((AbstractField) text).addValueChangeListener(null);
+			text.addValueChangeListener(event -> parentView.onChange(this));
 
 		return text;
 	}	//	getTextField
@@ -432,7 +432,9 @@ public class WebField {
 			string.setStyleName(C_ERROR);
 		else if (m_mandatory)
 			string.setStyleName(C_MANDATORY);
-
+		if (m_hasDependents || m_hasCallout)
+			string.addValueChangeListener(event -> parentView.onChange(this));
+		
 		return string;
 	}
 
@@ -481,11 +483,9 @@ public class WebField {
 		else if (m_mandatory)
 			string.setStyleName(C_MANDATORY);
 
-		/*if (m_hasDependents || m_hasCallout)
-			string.setOnChange("startUpdate(this);");
-		//
-		string.setOnKeyPress("return inputNumber(event);");*/
-
+		if (m_hasDependents || m_hasCallout)
+			string.addValueChangeListener(event -> parentView.onChange(this));
+	
 		return string;
 	}	//	getNumberField
 
@@ -507,8 +507,8 @@ public class WebField {
 		if (m_error)
 			cb.setStyleName(C_ERROR);
 
-		/*if (m_hasDependents || m_hasCallout)
-			cb.setOnChange("startUpdate(this);");*/
+		if (m_hasDependents || m_hasCallout)
+			cb.addValueChangeListener(event -> parentView.onChange(this));
 		//
 		return cb;
 	}	//	getCheckField
@@ -541,12 +541,6 @@ public class WebField {
 			display.addStyleName(C_ERROR);
 		else if (m_mandatory)
 			display.addStyleName(C_MANDATORY);
-
-	/*	if (m_hasDependents || m_hasCallout){
-			
-			hidden.setOnChange("startUpdate(this)");
-			
-		}*/
 		
 		return display;
 	}	//	getPopupField
@@ -598,8 +592,8 @@ public class WebField {
 		else if (m_mandatory)
 			display.setStyleName(C_MANDATORY);
 		//
-		/*if (m_hasDependents || m_hasCallout)
-			display.setOnChange("startUpdate(this);");*/
+		if (m_hasDependents || m_hasCallout)
+			display.addValueChangeListener(event -> parentView.onChange(this));
 		//
 		return display;
 	}	//	getPopupDateField
@@ -624,7 +618,7 @@ public class WebField {
 		if (m_readOnly)
 			return getDiv(dataDisplay);
 
-		NativeSelect ops = getOptions(lookup, dataValue);
+		NativeSelect<?> ops = getOptions(lookup, dataValue);
 		ops.setId(m_columnName + m_SuffixTo);
 		ops.setEnabled(!m_readOnly);
 
@@ -633,8 +627,8 @@ public class WebField {
 		else if (m_mandatory)
 			ops.setStyleName(C_MANDATORY);
 
-		/*if (m_hasDependents || m_hasCallout)
-			sel.setOnChange("startUpdate(this);");*/
+		if (m_hasDependents || m_hasCallout)
+			ops.addValueChangeListener(event -> parentView.onChange(this));
 
 		return ops; 	
 	}	//	getSelectField
@@ -1076,7 +1070,7 @@ public class WebField {
 				Object data = ((NativeSelect) componentField).getValue();
 				if (data instanceof KeyNamePair)
 					return ((KeyNamePair) data).getID();
-				else
+				else if (data != null)
 					return ((ValueNamePair) data).getID();
 			}
 			if (componentField instanceof CheckBox)

@@ -28,26 +28,20 @@ public class MobileWindow {
 		this.curTab = curTab;
 	}
 
-	public boolean saveRecord(ArrayList<WebField> webFields) {
+	public boolean saveRecord(ArrayList<WebField> webFields, GridField calloutField) {
 
 		boolean error = updateFields(webFields);
-		//boolean startcallouts = false;
 
 		//  Check Mandatory
 		log.fine("Mandatory check");
 		int size = curTab.getFieldCount();
 		for (int i = 0; i < size; i++) {
 			GridField field = curTab.getField(i);
-			/*if (startUpdate != null) {
-				if(startcallouts==false && field.getColumnName().compareTo(startUpdate)==0) 
-					startcallouts=true;
-				if(startcallouts){
-					if(!field.getCallout().isEmpty()){
-						curTab.processCallout(field);
-						startcallouts=false;
-					}
-				}
-			}*/
+			
+			//Process callouts
+			if (calloutField != null && calloutField.getColumnName().equals(field.getColumnName())) {
+				curTab.processCallout(field);
+			}
 			//  context check
 			if (field.isMandatory(true)) {
 				Object value = field.getValue();
@@ -232,22 +226,5 @@ public class MobileWindow {
 		//  treat as string
 		return value;
 	}   //  getFieldValue
-
-	/*private Object lookupValue(String key, Lookup lookup) {
-		if (lookup == null)
-			return null;
-
-		if (lookup.containsKey(key))
-			return lookup.get(key);
-
-		if (lookup.getZoomQuery() != null)
-			return DB.getSQLValueString(null, "SELECT " + lookup.getColumnName() + 
-					" FROM " + lookup.getZoomQuery().getTableName() + 
-					" WHERE " + lookup.getZoomQuery().getWhereClause() + 
-					" AND Value LIKE ?", key);
-
-		return null;
-	}*/
-
 
 }
