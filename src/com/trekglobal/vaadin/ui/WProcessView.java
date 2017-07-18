@@ -287,4 +287,8 @@ public class WProcessView extends AbstractWebFieldView {
 		return null;
 	}
 
+	@Override
+	public void onChange(WebField webField) {
+	}
+
 }

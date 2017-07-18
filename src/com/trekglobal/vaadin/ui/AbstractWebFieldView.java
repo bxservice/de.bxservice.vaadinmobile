@@ -57,6 +57,9 @@ public abstract class AbstractWebFieldView extends AbstractToolbarView implement
 	public void onLookUpOK(WebField webField, MobileLookupGenericObject selectedRecord) {
 		webField.setNewValue(String.valueOf(selectedRecord.getId()), selectedRecord.getQueryValue());
 		lookupPopup.setPopupVisible(false);
+		
+		if (webField.isHasDependents() || webField.isHasCallout())
+			onChange(webField);
 	}
 	
 	@Override

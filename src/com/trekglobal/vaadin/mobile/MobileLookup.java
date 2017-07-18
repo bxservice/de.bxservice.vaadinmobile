@@ -257,5 +257,21 @@ public class MobileLookup {
 		
 		return true;
 	}
+	
+	/*private Object lookupValue(String key, Lookup lookup) {
+	if (lookup == null)
+		return null;
+
+	if (lookup.containsKey(key))
+		return lookup.get(key);
+
+	if (lookup.getZoomQuery() != null)
+		return DB.getSQLValueString(null, "SELECT " + lookup.getColumnName() + 
+				" FROM " + lookup.getZoomQuery().getTableName() + 
+				" WHERE " + lookup.getZoomQuery().getWhereClause() + 
+				" AND Value LIKE ?", key);
+
+	return null;
+    }*/
 
 }
