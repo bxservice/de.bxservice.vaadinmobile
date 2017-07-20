@@ -834,12 +834,9 @@ IFindView, Button.ClickListener, DataStatusListener {
 	@Override
 	public void onChange(WebField webField) {
 		GridField field = webField.getGridField();
-		
-		if (!field.getCallout().isEmpty()) {
-			MobileWindow mobileWindow = new MobileWindow(wsc.ctx, curTab);
-			mobileWindow.saveRecord(webFields, field);
-			generateSingleRowView(false);
-		}
+		MobileWindow mobileWindow = new MobileWindow(wsc.ctx, curTab);
+		mobileWindow.saveRecord(webFields, field);
+		generateSingleRowView(false);
 	}
 
 	@Override
