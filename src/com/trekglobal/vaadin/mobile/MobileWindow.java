@@ -39,7 +39,8 @@ public class MobileWindow {
 			GridField field = curTab.getField(i);
 			
 			//Process callouts
-			if (calloutField != null && calloutField.getColumnName().equals(field.getColumnName())) {
+			if (calloutField != null && calloutField.getColumnName().equals(field.getColumnName())
+					&& !field.getCallout().isEmpty()) {
 				curTab.processCallout(field);
 			}
 			//  context check
