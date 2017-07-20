@@ -895,12 +895,9 @@ IFindView, Button.ClickListener, DataStatusListener {
 					sb.replace(pos, pos+1, " - ");
 				}
 				
-				Type messageType = Type.HUMANIZED_MESSAGE;
 				if (e.isError()) {
-					messageType = Type.ERROR_MESSAGE;
-				}
-				
-				Notification.show(sb.toString(), messageType);
+					Notification.show(sb.toString(), Type.ERROR_MESSAGE);
+				}				
 			}
 		}
 		
