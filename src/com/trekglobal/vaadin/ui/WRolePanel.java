@@ -67,8 +67,6 @@ public class WRolePanel extends AbstractToolbarView {
 	protected void initComponents() {
 
 		windowTitle = Msg.getMsg(Env.getCtx(), "SelectRole");
-		loginPage.getPage().setTitle(windowTitle);
-		
     	Language language = Env.getLanguage(wsc.ctx);
     	
     	//Header

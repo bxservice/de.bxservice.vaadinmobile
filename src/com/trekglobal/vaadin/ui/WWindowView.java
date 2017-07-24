@@ -106,8 +106,6 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	protected void initComponents() {
 
 		windowTitle = curTab.getName();
-		loginPage.getPage().setTitle(windowTitle);
-
 		header = new WHeader(this, true, true);
 		content = createContent();
 		footer = new WFooter(this);
