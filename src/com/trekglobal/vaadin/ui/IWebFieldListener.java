@@ -2,7 +2,7 @@ package com.trekglobal.vaadin.ui;
 
 import com.trekglobal.vaadin.mobile.MobileLookupGenericObject;
 
-public interface IWebFieldView {
+public interface IWebFieldListener {
 
 	void onChange(WebField webField);
 	void onLocationLookUp(WebField webField);

@@ -19,7 +19,7 @@ public class WFindView extends VerticalLayout {
 	 */
 	private static final long serialVersionUID = -1382729531274399234L;
 	
-	private IFindView view;
+	private IFindListener listener;
 	private TextField valueTextField;
 	private TextField nameTextField;
 	private TextField docNoTextField;
@@ -27,9 +27,9 @@ public class WFindView extends VerticalLayout {
 	private Button okButton; 
 	private Button cancelButton;
 	
-	public WFindView(IFindView view, GridTab curTab) {
+	public WFindView(IFindListener listener, GridTab curTab) {
 		
-		this.view = view;
+		this.listener = listener;
 		
 		boolean hasValue = false;
 		boolean hasName = false;
@@ -98,7 +98,7 @@ public class WFindView extends VerticalLayout {
 		cancelButton = new Button();
 		cancelButton.setIcon(VaadinIcons.CLOSE_SMALL);
 		cancelButton.addStyleName("cancel-button");
-		cancelButton.addClickListener(e -> view.onCancelSearch());
+		cancelButton.addClickListener(e -> listener.onCancelSearch());
 		buttonRow.addComponent(cancelButton);
 		
 		okButton = new Button();
@@ -126,7 +126,7 @@ public class WFindView extends VerticalLayout {
 		if (descriptionTextField != null)
 			description = descriptionTextField.getValue();
 		
-		view.onSearch(value, name, description, docNo);
+		listener.onSearch(value, name, description, docNo);
 	}
 	
 	public void reset() {
