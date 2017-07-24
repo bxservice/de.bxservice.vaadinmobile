@@ -2,7 +2,7 @@ package com.trekglobal.vaadin.ui;
 
 import javax.servlet.ServletException;
 
-import org.adempiere.webui.theme.ThemeManager;
+import org.compiere.model.MSysConfig;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
@@ -12,7 +12,6 @@ import com.trekglobal.vaadin.mobile.MobileEnv;
 import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.trekglobal.vaadin.mobile.VEnv;
 import com.vaadin.annotations.PreserveOnRefresh;
-import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Viewport;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
@@ -24,7 +23,6 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
-@Theme("mobiletheme")
 @Viewport("user-scalable=no,initial-scale=1.0")
 @PreserveOnRefresh
 public class WNavigatorUI extends UI {
@@ -34,6 +32,7 @@ public class WNavigatorUI extends UI {
 	 */
 	private static final long serialVersionUID = 7582342143333788115L;
 	private static final String DEFAULT_UI_PATH = "/m";
+	private static final String VAADIN_THEME_DEFAULT = "mobiletheme";
 
 	// 
 	private Navigator navigator;
@@ -44,8 +43,9 @@ public class WNavigatorUI extends UI {
 	protected WRolePanel  rolePanel;
 
 	@Override
-	protected void init(VaadinRequest request) {		
-		getPage().setTitle(ThemeManager.getBrowserTitle());
+	protected void init(VaadinRequest request) {
+		setTheme(MSysConfig.getValue("VAADIN_THEME", VAADIN_THEME_DEFAULT));
+		getPage().setTitle(MSysConfig.getValue(MSysConfig.ZK_BROWSER_TITLE, "iDempiere"));
 
 		//  Get Cookie Properties
 		//cookieProps = MobileUtil.getCookieProperties(VaadinServletService.getCurrentServletRequest());
