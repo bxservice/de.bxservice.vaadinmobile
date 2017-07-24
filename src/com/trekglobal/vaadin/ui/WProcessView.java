@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.adempiere.util.ServerContext;
 import org.compiere.model.GridTab;
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
@@ -39,6 +40,7 @@ public class WProcessView extends AbstractWebFieldView {
 	
 	public WProcessView(MobileSessionCtx wsc, WNavigatorUI loginPage, int AD_Menu_ID) {
 		super(wsc, loginPage);
+		ServerContext.setCurrentInstance(wsc.ctx);
 		process = MProcess.getFromMenu (wsc.ctx, AD_Menu_ID);
 		
 		if (process == null) {
