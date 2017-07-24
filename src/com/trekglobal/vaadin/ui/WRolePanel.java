@@ -60,6 +60,7 @@ public class WRolePanel extends AbstractToolbarView {
 		
 		if (clients.length == 1) {
         	Env.setContext(wsc.ctx, "#AD_Client_ID", clients[0].getID());
+        	Env.setContext(Env.getCtx(), "#AD_Client_ID", clients[0].getID());
         }
 	}
 	
@@ -146,8 +147,10 @@ public class WRolePanel extends AbstractToolbarView {
     private void setUserID() {
     	if (clientSelector.getSelectedItem() != null) {
         	Env.setContext(wsc.ctx, "#AD_Client_ID", (String) clientSelector.getSelectedItem().get().getID());
+        	Env.setContext(Env.getCtx(), "#AD_Client_ID", (String) clientSelector.getSelectedItem().get().getID());
     	} else {
         	Env.setContext(wsc.ctx, "#AD_Client_ID", (String) null);
+        	Env.setContext(Env.getCtx(), "#AD_Client_ID", (String) null);
     	}
     	MUser user = MUser.get(wsc.ctx, userName);
     	if (user != null) {
