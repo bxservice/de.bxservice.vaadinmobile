@@ -23,17 +23,17 @@ public class WLookupView  extends VerticalLayout {
 	 */
 	private static final long serialVersionUID = 6099382690755046614L;
 
-	private IWebFieldView parentView;
+	private IWebFieldListener listener;
 	private MobileLookup lookup;
 	private Button okButton; 
 	private Button cancelButton;
 	
 	private ArrayList<TextField> searchFields = new ArrayList<>();
 
-	public WLookupView(IWebFieldView parentView, MobileLookup lookup) {
+	public WLookupView(IWebFieldListener listener, MobileLookup lookup) {
 
 		this.lookup = lookup;
-		this.parentView = parentView;
+		this.listener = listener;
 
 		setTitle();
 		initSearchUI();
@@ -53,7 +53,7 @@ public class WLookupView  extends VerticalLayout {
 		cancelButton = new Button();
 		cancelButton.setIcon(VaadinIcons.CLOSE_SMALL);
 		cancelButton.addStyleName("cancel-button");
-		cancelButton.addClickListener(e -> parentView.onLookUpCancel());
+		cancelButton.addClickListener(e -> listener.onLookUpCancel());
 		buttonRow.addComponent(cancelButton);
 
 		okButton = new Button();
@@ -105,7 +105,7 @@ public class WLookupView  extends VerticalLayout {
 		resultList.setItems(results);
 		resultList.addColumn(MobileLookupGenericObject::getQueryValue).setCaption(lookup.getSearchLabels()[0]);
 		
-		resultList.addItemClickListener(event -> parentView.onLookUpOK(lookup.getWebField(), event.getItem()));
+		resultList.addItemClickListener(event -> listener.onLookUpOK(lookup.getWebField(), event.getItem()));
         
 		resultList.setSizeFull();
         

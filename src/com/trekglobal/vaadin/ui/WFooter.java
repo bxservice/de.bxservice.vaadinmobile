@@ -12,7 +12,7 @@ public class WFooter extends HorizontalLayout {
 	 */
 	private static final long serialVersionUID = -1444858543479291226L;
 	
-	private IFooterView parentView;
+	private IFooterListener footerListener;
 	
 	//Possible footer buttons
 	private NativeButton newButton;
@@ -22,8 +22,8 @@ public class WFooter extends HorizontalLayout {
 	private NativeButton deleteButton;
 	private NativeButton saveButton;
 	
-	public WFooter(IFooterView parentView) {
-		this.parentView = parentView;
+	public WFooter(IFooterListener footerListener) {
+		this.footerListener = footerListener;
 		
 		//Takes care of the right alignment
 		setSizeFull();
@@ -61,33 +61,33 @@ public class WFooter extends HorizontalLayout {
 
 	public void setNewButton() {
 		newButton = addButton(VaadinIcons.FILE_ADD);
-		newButton.addClickListener(event -> parentView.onNewButtonPressed());
+		newButton.addClickListener(event -> footerListener.onNewButtonPressed());
 	}
 	
 	public void setEditButton() {
 		editButton = addButton(VaadinIcons.EDIT);
-		editButton.addClickListener(event -> parentView.onEditButtonPressed());
+		editButton.addClickListener(event -> footerListener.onEditButtonPressed());
 	}
 	
 	public void setSearchButton() {
 		searchButton = addButton(VaadinIcons.SEARCH);
-		searchButton.addClickListener(event -> parentView.onSearchButtonPressed());
+		searchButton.addClickListener(event -> footerListener.onSearchButtonPressed());
 	}
 	
 	public void setProcessButton() {
 		processButton = addButton(VaadinIcons.COG);
-		processButton.addClickListener(event -> parentView.onProcessButtonPressed());
+		processButton.addClickListener(event -> footerListener.onProcessButtonPressed());
 	}
 	
 	public void setDeleteButton() {
 		deleteButton = addButton(VaadinIcons.TRASH);
-		deleteButton.addClickListener(event -> parentView.onDeleteButtonPressed());
+		deleteButton.addClickListener(event -> footerListener.onDeleteButtonPressed());
 	}
 	
 	public void setSaveButton() {
 		saveButton = addButton(VaadinIcons.CHECK);
 		//editButton.setCaption("SAVE");
-		saveButton.addClickListener(event -> parentView.onSaveButtonPressed());
+		saveButton.addClickListener(event -> footerListener.onSaveButtonPressed());
 	}
 	
 	private NativeButton addButton(Resource icon) {
