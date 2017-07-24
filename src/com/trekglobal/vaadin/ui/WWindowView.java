@@ -98,7 +98,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 			return;
 		}
 
-		mWindow = new GridWindow(mWindowVO);
+		mWindow = new GridWindow(mWindowVO, true);
 		Env.setContext(wsc.ctx, s_WindowNo, "IsSOTrx", mWindow.isSOTrx());
 		setCurTab(mWindow.getTab(0));
 	}

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.util.UserPreference;
 import org.compiere.model.MSysConfig;
 import org.compiere.util.Env;
@@ -15,6 +14,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.Util;
 
 import com.trekglobal.vaadin.mobile.MobileSessionCtx;
+import com.trekglobal.vaadin.mobile.VEnv;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Responsive;
@@ -168,7 +168,7 @@ public class WLoginPanel extends AbstractToolbarView {
 		
     	Env.verifyLanguage(wsc.ctx, language);
     	Env.setContext(wsc.ctx, Env.LANGUAGE, language.getAD_Language());
-    	Env.setContext(wsc.ctx, AEnv.LOCALE, language.getLocale().toString());
+    	Env.setContext(wsc.ctx, VEnv.LOCALE, language.getLocale().toString());
 
 		return language;
 	}
