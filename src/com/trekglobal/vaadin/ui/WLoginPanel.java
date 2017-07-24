@@ -64,8 +64,6 @@ public class WLoginPanel extends AbstractToolbarView {
 		String pwdText = Msg.getMsg(AD_Language, "Password");
 		String lngText = Msg.translate(AD_Language, "AD_Language");
 
-		loginPage.getPage().setTitle(windowTitle);
-		
 		//Header
 		header = new WHeader(this, false, false);
 

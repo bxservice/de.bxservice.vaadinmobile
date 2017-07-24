@@ -2,6 +2,7 @@ package com.trekglobal.vaadin.ui;
 
 import javax.servlet.ServletException;
 
+import org.adempiere.webui.theme.ThemeManager;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
@@ -37,16 +38,14 @@ public class WNavigatorUI extends UI {
 	// 
 	private Navigator navigator;
 	protected MobileSessionCtx wsc;
-	protected VaadinRequest request;
 
 	// UI elements
 	protected WLoginPanel loginPanel;
 	protected WRolePanel  rolePanel;
 
 	@Override
-	protected void init(VaadinRequest request) {
-
-		this.request = request;
+	protected void init(VaadinRequest request) {		
+		getPage().setTitle(ThemeManager.getBrowserTitle());
 
 		//  Get Cookie Properties
 		//cookieProps = MobileUtil.getCookieProperties(VaadinServletService.getCurrentServletRequest());
