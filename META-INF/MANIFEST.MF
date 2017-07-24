@@ -12,7 +12,6 @@ Web-ContextPath: m
 Import-Package: javax.servlet;version="3.0.0",
  javax.servlet.annotation;version="3.0.0",
  javax.servlet.http;version="3.0.0",
- org.adempiere.webui.apps,
  org.adempiere.webui.util,
  org.atmosphere.container,
  org.atmosphere.websocket,

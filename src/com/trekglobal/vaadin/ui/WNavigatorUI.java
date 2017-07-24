@@ -9,6 +9,7 @@ import org.compiere.util.Msg;
 
 import com.trekglobal.vaadin.mobile.MobileEnv;
 import com.trekglobal.vaadin.mobile.MobileSessionCtx;
+import com.trekglobal.vaadin.mobile.VEnv;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Viewport;
@@ -110,6 +111,9 @@ public class WNavigatorUI extends UI {
 	}
 	
 	public void logout() {
+    	//logout ad_session
+		VEnv.logout();
+		
 		//clear context, invalidate session
     	Env.getCtx().clear();
 
