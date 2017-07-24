@@ -47,8 +47,8 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
 
-public class WWindowView extends AbstractWebFieldView implements LayoutClickListener, IFooterView, 
-IFindView, Button.ClickListener, DataStatusListener {
+public class WWindowView extends AbstractWebFieldView implements LayoutClickListener, IFooterListener, 
+IFindListener, Button.ClickListener, DataStatusListener {
 
 	/**
 	 * 
