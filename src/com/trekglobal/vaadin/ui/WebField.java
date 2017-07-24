@@ -75,7 +75,7 @@ public class WebField {
 	/**	CSS Field Error Class					*/
 	public static final String C_ERROR     = "Cerror";
 
-	private IWebFieldView parentView;
+	private IWebFieldListener fieldListener;
 	private Properties ctx;
 	private String 	m_columnName;
 	private String 	m_processParaKey;
@@ -121,7 +121,7 @@ public class WebField {
 	 *	@param hasDependents has dependent fields
 	 *	@param hasCallout has callout functions
 	 */
-	public WebField (IWebFieldView parentView, Properties ctx, String columnName, String name, String description,
+	public WebField (IWebFieldListener fieldListener, Properties ctx, String columnName, String name, String description,
 			int displayType, int fieldLength, int displayLength, boolean longField, 
 			boolean readOnly, boolean mandatory, boolean error, 
 			boolean hasDependents, boolean hasCallout, int AD_Process_ID,
@@ -129,7 +129,7 @@ public class WebField {
 			String callOut, GridTab mTab, GridField mField, MRole mRole, boolean rangeTo) {
 		super();
 		this.ctx = ctx;
-		this.parentView = parentView;
+		this.fieldListener = fieldListener;
 		m_columnName = columnName;		
 		if (rangeTo)
 			m_columnName += "_2";
@@ -165,13 +165,13 @@ public class WebField {
 
 	}	//	WebField
 
-	public WebField(IWebFieldView parentView, Properties ctx, String columnName, String name, String description,
+	public WebField(IWebFieldListener fieldListener, Properties ctx, String columnName, String name, String description,
 			int displayType, int fieldLength, int displayLength, boolean longField, 
 			boolean readOnly, boolean mandatory, boolean error, 
 			boolean hasDependents, boolean hasCallout, int AD_Process_ID,
 			int AD_Window_ID, int AD_Record_ID, int AD_Table_ID, int fieldNumber, Object defaultvalue, 
 			String callOut, GridTab mTab, GridField mField, MRole mRole) {
-		this(parentView, ctx, columnName, name, description,
+		this(fieldListener, ctx, columnName, name, description,
 				displayType, fieldLength, displayLength, longField, 
 				readOnly, mandatory, error, 
 				hasDependents, hasCallout, AD_Process_ID,
@@ -182,11 +182,11 @@ public class WebField {
 	/**
 	 * Constructor to be called for process parameters 
 	 */
-	public WebField(IWebFieldView parentView, Properties ctx, String columnName, String name, String description,
+	public WebField(IWebFieldListener fieldListener, Properties ctx, String columnName, String name, String description,
 			int displayType, int fieldLength, int displayLength, boolean mandatory, 
 			int AD_Process_ID, int AD_Window_ID, int AD_Record_ID, int AD_Table_ID, 
 			int fieldNumber, String key) {
-		this(parentView, ctx, columnName, name, description,
+		this(fieldListener, ctx, columnName, name, description,
 				displayType, fieldLength, displayLength, false, 
 				false, mandatory, false, 
 				false, false, AD_Process_ID,
@@ -201,7 +201,6 @@ public class WebField {
 
 	/**
 	 * 	Get the field Label
-	 * @param edit TODO
 	 *	@return label
 	 */
 	public Label getLabel(boolean edit) {
@@ -410,7 +409,7 @@ public class WebField {
 		else if (m_mandatory)
 			text.setStyleName(C_MANDATORY);
 		if (m_hasDependents || m_hasCallout)
-			text.addValueChangeListener(event -> parentView.onChange(this));
+			text.addValueChangeListener(event -> fieldListener.onChange(this));
 
 		return text;
 	}	//	getTextField
@@ -434,7 +433,7 @@ public class WebField {
 		else if (m_mandatory)
 			string.setStyleName(C_MANDATORY);
 		if (m_hasDependents || m_hasCallout)
-			string.addValueChangeListener(event -> parentView.onChange(this));
+			string.addValueChangeListener(event -> fieldListener.onChange(this));
 		
 		return string;
 	}
@@ -485,7 +484,7 @@ public class WebField {
 			string.setStyleName(C_MANDATORY);
 
 		if (m_hasDependents || m_hasCallout)
-			string.addValueChangeListener(event -> parentView.onChange(this));
+			string.addValueChangeListener(event -> fieldListener.onChange(this));
 	
 		return string;
 	}	//	getNumberField
@@ -509,7 +508,7 @@ public class WebField {
 			cb.setStyleName(C_ERROR);
 
 		if (m_hasDependents || m_hasCallout)
-			cb.addValueChangeListener(event -> parentView.onChange(this));
+			cb.addValueChangeListener(event -> fieldListener.onChange(this));
 		//
 		return cb;
 	}	//	getCheckField
@@ -532,9 +531,9 @@ public class WebField {
 		display.addStyleName("bxpopup-button");
 		
 		if (m_displayType == DisplayType.Location ){
-			display.addClickListener(e -> parentView.onLocationLookUp(this));
+			display.addClickListener(e -> fieldListener.onLocationLookUp(this));
 		}else 
-			display.addClickListener(e -> parentView.onLookUp(this));
+			display.addClickListener(e -> fieldListener.onLookUp(this));
 
 		display.setId(m_columnName + "D" + m_SuffixTo);
 		
@@ -594,7 +593,7 @@ public class WebField {
 			display.setStyleName(C_MANDATORY);
 		//
 		if (m_hasDependents || m_hasCallout)
-			display.addValueChangeListener(event -> parentView.onChange(this));
+			display.addValueChangeListener(event -> fieldListener.onChange(this));
 		//
 		return display;
 	}	//	getPopupDateField
@@ -629,7 +628,7 @@ public class WebField {
 			ops.setStyleName(C_MANDATORY);
 
 		if (m_hasDependents || m_hasCallout)
-			ops.addValueChangeListener(event -> parentView.onChange(this));
+			ops.addValueChangeListener(event -> fieldListener.onChange(this));
 
 		return ops; 	
 	}	//	getSelectField

@@ -9,7 +9,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PopupView;
 
-public abstract class AbstractWebFieldView extends AbstractToolbarView implements IWebFieldView {
+public abstract class AbstractWebFieldView extends AbstractToolbarView implements IWebFieldListener {
 
 	/**
 	 * 
