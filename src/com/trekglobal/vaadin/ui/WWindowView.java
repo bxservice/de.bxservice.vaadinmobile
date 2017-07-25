@@ -98,7 +98,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 			return;
 		}
 
-		mWindow = new GridWindow(mWindowVO);
+		mWindow = new GridWindow(mWindowVO, true);
 		Env.setContext(wsc.ctx, s_WindowNo, "IsSOTrx", mWindow.isSOTrx());
 		setCurTab(mWindow.getTab(0));
 	}
@@ -106,8 +106,6 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	protected void initComponents() {
 
 		windowTitle = curTab.getName();
-		loginPage.getPage().setTitle(windowTitle);
-
 		header = new WHeader(this, true, true);
 		content = createContent();
 		footer = new WFooter(this);

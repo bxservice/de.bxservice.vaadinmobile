@@ -39,8 +39,6 @@ public class WMenuView extends AbstractToolbarView implements Button.ClickListen
 	protected void initComponents() {
 
 		windowTitle = Util.cleanAmp(Msg.getMsg(Env.getCtx(),"Menu"));
-		loginPage.getPage().setTitle(windowTitle);
-
 		header = new WHeader(this, true, true);
 		header.setLogoutButton();
 		content = new CssLayout();

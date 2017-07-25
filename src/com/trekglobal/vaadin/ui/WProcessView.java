@@ -53,8 +53,6 @@ public class WProcessView extends AbstractWebFieldView {
 	protected void initComponents() {
 
 		windowTitle = process.get_Translation("Name");
-		loginPage.getPage().setTitle(windowTitle);
-
 		header = new WHeader(this, true, true);
 		content = new CssLayout();
 		content.addStyleName("bxprocess-content");
