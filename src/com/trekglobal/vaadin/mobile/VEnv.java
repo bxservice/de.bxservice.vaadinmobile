@@ -11,6 +11,9 @@ import org.compiere.util.Env;
 public class VEnv {
 	
 	public static final String LOCALE = "#Locale";
+	
+	/** Timeout - 15 Minutes                    */
+	public static final int         TIMEOUT     = 15*60;
 
 	/**
 	 * logout AD_Session
