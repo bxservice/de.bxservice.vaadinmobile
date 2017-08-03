@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.adempiere.util.ServerContext;
 import org.compiere.model.DataStatusEvent;
 import org.compiere.model.DataStatusListener;
 import org.compiere.model.GridField;
@@ -29,7 +28,6 @@ import org.compiere.util.Util;
 import org.compiere.util.ValueNamePair;
 
 import com.trekglobal.vaadin.mobile.MobileProcess;
-import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.trekglobal.vaadin.mobile.MobileWindow;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -84,22 +82,23 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	private PopupView processPopup;
 	private PopupView searchPopup;
 
-	public WWindowView(MobileSessionCtx wsc, WNavigatorUI loginPage, int AD_Menu_ID) {
-		super(wsc, loginPage);
-		MMenu menu = new MMenu(Env.getCtx(), AD_Menu_ID, null);
+	public WWindowView(WNavigatorUI loginPage, int AD_Menu_ID) {
+		super(loginPage);
+    	syncCtx();
+		MMenu menu = new MMenu(ctx, AD_Menu_ID, null);
 
 		//TODO: Change to menu.getAD_Window_ID() instead of 0 when the ctx is fixed
-		GridWindowVO mWindowVO = GridWindowVO.create(wsc.ctx, s_WindowNo++, 0, AD_Menu_ID);
+		GridWindowVO mWindowVO = GridWindowVO.create(ctx, s_WindowNo++, 0, AD_Menu_ID);
 		if (mWindowVO == null) {
-			String msg = Msg.translate(wsc.ctx, "AD_Window_ID") + " "
-					+ Msg.getMsg(wsc.ctx, "NotFound") + ", ID=" + menu.getAD_Window_ID() + "/" + AD_Menu_ID;
+			String msg = Msg.translate(ctx, "AD_Window_ID") + " "
+					+ Msg.getMsg(ctx, "NotFound") + ", ID=" + menu.getAD_Window_ID() + "/" + AD_Menu_ID;
 			Notification.show(msg,
 					Type.ERROR_MESSAGE);
 			return;
 		}
 
 		mWindow = new GridWindow(mWindowVO, true);
-		Env.setContext(wsc.ctx, s_WindowNo, "IsSOTrx", mWindow.isSOTrx());
+		Env.setContext(ctx, s_WindowNo, "IsSOTrx", mWindow.isSOTrx());
 		setCurTab(mWindow.getTab(0));
 	}
 
@@ -127,6 +126,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		if (repaint)
 			replaceContent();
 
+    	syncCtx();
 		singleRowSelected = false;
 		mapRowLine.clear();
 		curTab.navigate(0);
@@ -198,25 +198,25 @@ IFindListener, Button.ClickListener, DataStatusListener {
 					int dt = field.getDisplayType();
 					switch (dt) {
 					case DisplayType.Date:
-						info = DisplayType.getDateFormat(DisplayType.Date, Env.getLanguage(wsc.ctx)).format(data);
+						info = DisplayType.getDateFormat(DisplayType.Date, Env.getLanguage(ctx)).format(data);
 						break;
 					case DisplayType.DateTime:
-						info = DisplayType.getDateFormat(DisplayType.DateTime, Env.getLanguage(wsc.ctx)).format(data);							
+						info = DisplayType.getDateFormat(DisplayType.DateTime, Env.getLanguage(ctx)).format(data);							
 					case DisplayType.Amount:
-						info = DisplayType.getNumberFormat(DisplayType.Amount, Env.getLanguage(wsc.ctx)).format(data);
+						info = DisplayType.getNumberFormat(DisplayType.Amount, Env.getLanguage(ctx)).format(data);
 						break;
 					case DisplayType.Number:
 					case DisplayType.CostPrice:
-						info = DisplayType.getNumberFormat(DisplayType.Number, Env.getLanguage(wsc.ctx)).format(data);
+						info = DisplayType.getNumberFormat(DisplayType.Number, Env.getLanguage(ctx)).format(data);
 						break;
 					case DisplayType.Quantity:
-						info = DisplayType.getNumberFormat(DisplayType.Quantity, Env.getLanguage(wsc.ctx)).format(data);
+						info = DisplayType.getNumberFormat(DisplayType.Quantity, Env.getLanguage(ctx)).format(data);
 						break;
 					case DisplayType.Integer:
-						info = DisplayType.getNumberFormat(DisplayType.Integer, Env.getLanguage(wsc.ctx)).format(data);
+						info = DisplayType.getNumberFormat(DisplayType.Integer, Env.getLanguage(ctx)).format(data);
 						break;
 					case DisplayType.YesNo:
-						info = Msg.getMsg(wsc.ctx, data.toString());
+						info = Msg.getMsg(ctx, data.toString());
 						break;
 						/** @todo output formatting 2 */
 					default:
@@ -359,8 +359,9 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	}
 
 	private void printCurrentTab(boolean isReadOnly) {
+    	syncCtx();
 		int noFields = curTab.getFieldCount();
-		MRole role = MRole.getDefault(wsc.ctx, false);
+		MRole role = MRole.getDefault(ctx, false);
 
 		singleRowSection = new CssLayout();
 		singleRowSection.addStyleName("singlerow-content");
@@ -402,7 +403,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 			} 
 			// Processes
 			else if (field.isDisplayed(true) && field.getDisplayType() == DisplayType.Button) {
-				MProcess process = new MProcess(wsc.ctx, field.getAD_Process_ID(), null);
+				MProcess process = new MProcess(ctx, field.getAD_Process_ID(), null);
 				processes.add(process);
 			}
 		}	//	for all fields
@@ -410,7 +411,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		MToolBarButton[] toolBarButtons = MToolBarButton.getProcessButtonOfTab(curTab.getAD_Tab_ID(), null);
 		if (toolBarButtons != null && toolBarButtons.length > 0) { 
 			for (MToolBarButton button : toolBarButtons) {
-				MProcess process = new MProcess(wsc.ctx, button.getAD_Process_ID(), null);
+				MProcess process = new MProcess(ctx, button.getAD_Process_ID(), null);
 				processes.add(process);
 			}
 		}
@@ -467,7 +468,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		 *      NAME = columnName
 		 *      ID = ID_columnName
 		 */
-		WebField wField = new WebField (this, wsc.ctx, columnName, field.getHeader(), field.getDescription(),
+		WebField wField = new WebField (this, ctx, columnName, field.getHeader(), field.getDescription(),
 				displayType, field.getFieldLength(), field.getDisplayLength(), field.isLongField(),
 				fieldRO, field.isMandatory(false), error, hasDependents, hasCallout, 
 				field.getAD_Process_ID(), field.getAD_Window_ID(), recordID, tableID, 
@@ -491,6 +492,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 
 	@Override
 	public void onLeftButtonPressed() {
+    	syncCtx();
 		if (!footer.isVisible())
 			updateTabMenu();
 
@@ -521,6 +523,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 
 	@Override
 	public void onNewButtonPressed() {
+    	syncCtx();
 		if (!curTab.dataNew(false))
 			curTab.dataIgnore();
 		generateSingleRowView(false);
@@ -528,12 +531,14 @@ IFindListener, Button.ClickListener, DataStatusListener {
 
 	@Override
 	public void onEditButtonPressed() {
+    	syncCtx();
 		generateSingleRowView(false);
 	}
 
 	@Override
 	public void onSearchButtonPressed() {
 		if (searchPopup == null) {
+	    	syncCtx();
 			WFindView searchContent = new WFindView(this, curTab);
 			searchPopup = new PopupView(null, searchContent);
 			searchPopup.addStyleName("searchdialog");
@@ -556,6 +561,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	@Override
 	public void onSearch(String value, String name, String description, String docNo) {
 		MQuery query=new MQuery();
+    	syncCtx();
 
 		if (value !=null && value.length()!= 0) 
 			query.addRestriction("UPPER(Value)", MQuery.LIKE, "%"+value.toUpperCase()+"%");
@@ -605,7 +611,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 
 	public void createProcessParameterPanel(MProcess process) {
 
-		ServerContext.setCurrentInstance(wsc.ctx);
+    	syncCtx();
 
 		//	need to check if Role can access
 		if (process == null)
@@ -624,7 +630,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		int fieldNo = 0;
 		for (MProcessPara para : process.getParameters()) {
 
-			WebField wField = new WebField(this, wsc.ctx, para.getColumnName(), 
+			WebField wField = new WebField(this, ctx, para.getColumnName(), 
 					para.getName(), para.getDescription(), para.getAD_Reference_ID(), para.getFieldLength(), 
 					para.getFieldLength(), para.isMandatory(), para.getAD_Process_ID(),
 					mWindow.getWindowNo(),curTab.getRecord_ID(),curTab.getAD_Table_ID(), fieldNo++, null);
@@ -645,7 +651,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 			row.addStyleName("process-para-row");
 
 			if (para.isRange()) {
-				WebField wFieldforRange =  new WebField(this, wsc.ctx, para.getColumnName(), 
+				WebField wFieldforRange =  new WebField(this, ctx, para.getColumnName(), 
 						para.getName(), para.getDescription(), para.getAD_Reference_ID(), para.getFieldLength(), 
 						para.getFieldLength(), para.isMandatory(), para.getAD_Process_ID(),
 						mWindow.getWindowNo(),curTab.getRecord_ID(),curTab.getAD_Table_ID(), fieldNo++, 
@@ -675,7 +681,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		okButton.addStyleName("ok-button");
 		okButton.addClickListener(e ->  {
 			parametersPopup.setPopupVisible(false);
-			MobileProcess mProcess = new MobileProcess(wsc.ctx, process);
+			MobileProcess mProcess = new MobileProcess(process);
 
 			HashMap<String, String> parameters = new HashMap<String, String>();
 
@@ -714,8 +720,8 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	@Override
 	public void onDeleteButtonPressed() {
 		log.fine("Deleted!");
-
-		WConfirmationDialogView confirmationDialog = new WConfirmationDialogView(true, true, Msg.getMsg(Env.getLanguage(wsc.ctx), "DeleteRecord?"));
+    	syncCtx();
+		WConfirmationDialogView confirmationDialog = new WConfirmationDialogView(true, true, Msg.getMsg(Env.getLanguage(ctx), "DeleteRecord?"));
 		PopupView confirmationPopup = new PopupView(null, confirmationDialog);
 		confirmationPopup.addStyleName("bxconfirmation-dialog");
 
@@ -743,8 +749,8 @@ IFindListener, Button.ClickListener, DataStatusListener {
 
 	@Override
 	public void onSaveButtonPressed() {
-
-		MobileWindow mobileWindow = new MobileWindow(wsc.ctx, curTab);
+    	syncCtx();
+		MobileWindow mobileWindow = new MobileWindow(curTab);
 
 		boolean error = mobileWindow.saveRecord(webFields, null);
 
@@ -831,8 +837,9 @@ IFindListener, Button.ClickListener, DataStatusListener {
 
 	@Override
 	public void onChange(WebField webField) {
+    	syncCtx();
 		GridField field = webField.getGridField();
-		MobileWindow mobileWindow = new MobileWindow(wsc.ctx, curTab);
+		MobileWindow mobileWindow = new MobileWindow(curTab);
 		mobileWindow.saveRecord(webFields, field);
 		generateSingleRowView(false);
 	}
@@ -846,7 +853,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 			StringBuilder adMessage = new StringBuilder();
 			String origmsg = null;
 			if (msg != null && msg.length() > 0) {
-				origmsg = Msg.getMsg(Env.getCtx(), e.getAD_Message());
+				origmsg = Msg.getMsg(ctx, e.getAD_Message());
 				adMessage.append(origmsg);
 			}
 			String info = e.getInfo();

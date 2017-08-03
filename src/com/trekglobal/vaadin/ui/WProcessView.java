@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.adempiere.util.ServerContext;
 import org.compiere.model.GridTab;
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
@@ -12,7 +11,6 @@ import org.compiere.util.CLogger;
 import org.compiere.util.Msg;
 
 import com.trekglobal.vaadin.mobile.MobileProcess;
-import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.ui.ContentMode;
@@ -38,10 +36,10 @@ public class WProcessView extends AbstractWebFieldView {
 	
 	private MProcess process;
 	
-	public WProcessView(MobileSessionCtx wsc, WNavigatorUI loginPage, int AD_Menu_ID) {
-		super(wsc, loginPage);
-		ServerContext.setCurrentInstance(wsc.ctx);
-		process = MProcess.getFromMenu (wsc.ctx, AD_Menu_ID);
+	public WProcessView(WNavigatorUI loginPage, int AD_Menu_ID) {
+		super(loginPage);
+    	syncCtx();
+		process = MProcess.getFromMenu(ctx, AD_Menu_ID);
 		
 		if (process == null) {
 			Notification.show("Process not found",
@@ -107,16 +105,16 @@ public class WProcessView extends AbstractWebFieldView {
 
 				// Reset
 				String text = "Reset";
-				if (wsc.ctx != null)
-					text = Msg.getMsg (wsc.ctx, "Reset");		
+				if (ctx != null)
+					text = Msg.getMsg (ctx, "Reset");		
 				input restbtn = new input(input.TYPE_RESET, text, "  "+text);		
 				restbtn.setID(text);
 				restbtn.setClass("resetbtn");	
 				
 				//	Submit
 				 text = "Submit";
-				if (wsc.ctx != null)
-					text = Msg.getMsg (wsc.ctx, "submit");		
+				if (ctx != null)
+					text = Msg.getMsg (ctx, "submit");		
 				input submitbtn = new input(input.TYPE_SUBMIT, text, "  "+text);		
 				submitbtn.setID(text);
 				submitbtn.setClass("submitbtn");
@@ -157,7 +155,7 @@ public class WProcessView extends AbstractWebFieldView {
 			
 			int fieldNo = 0;
 			for (MProcessPara para : process.getParameters()) {
-				WebField wField = new WebField(this, wsc.ctx, para.getColumnName(), 
+				WebField wField = new WebField(this, ctx, para.getColumnName(), 
 						para.get_Translation("Name"), para.get_Translation("Description"),
 						para.getAD_Reference_ID(), para.getFieldLength(), para.getFieldLength(),
 						para.isMandatory(), para.getAD_Process_ID(),0,0,0,
@@ -182,7 +180,7 @@ public class WProcessView extends AbstractWebFieldView {
 				processWebFields.add(wField);
 
 				if (para.isRange()) {
-					WebField wFieldforRange = new WebField(this, wsc.ctx, para.getColumnName(), 
+					WebField wFieldforRange = new WebField(this, ctx, para.getColumnName(), 
 							para.getName(), para.getDescription(), para.getAD_Reference_ID(), 
 							para.getFieldLength(),para.getFieldLength(), para.isMandatory(), 
 							para.getAD_Process_ID(),0,0,0, fieldNo++, para.getColumnName()+"_2");
@@ -206,14 +204,14 @@ public class WProcessView extends AbstractWebFieldView {
 
 			//	Submit
 			String text = "Submit";
-			if (wsc.ctx != null)
-				text = Msg.getMsg(wsc.ctx, "submit");
+			if (ctx != null)
+				text = Msg.getMsg(ctx, "submit");
 
 			Button submitButton = new Button(text);
 			submitButton.addStyleName("bx-loginbutton");
 			
 			submitButton.addClickListener(e -> {
-				MobileProcess mProcess = new MobileProcess(wsc.ctx, process);
+				MobileProcess mProcess = new MobileProcess(process);
 
 				HashMap<String, String> parameters = new HashMap<String, String>();
 
