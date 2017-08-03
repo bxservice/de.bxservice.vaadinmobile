@@ -11,8 +11,12 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 
+import com.trekglobal.vaadin.ui.WNavigatorUI;
 import com.trekglobal.vaadin.ui.WebField;
 
+/**
+ * @author druiz
+ */
 public class MobileWindow {
 
 
@@ -23,8 +27,8 @@ public class MobileWindow {
 	private Properties ctx;
 	private GridTab curTab;
 
-	public MobileWindow(Properties ctx, GridTab curTab) {
-		this.ctx = ctx;
+	public MobileWindow(GridTab curTab) {
+		ctx = WNavigatorUI.getContext();
 		this.curTab = curTab;
 	}
 

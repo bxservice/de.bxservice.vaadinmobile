@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import org.compiere.model.GridField;
@@ -16,6 +17,7 @@ import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 
+import com.trekglobal.vaadin.ui.WNavigatorUI;
 import com.trekglobal.vaadin.ui.WebField;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -24,7 +26,7 @@ public class MobileLookup {
 
 	/**	Logger			*/
 	protected CLogger log = CLogger.getCLogger(getClass());
-	private MobileSessionCtx wsc;
+	private Properties ctx;
 	
 	private String header = "";
 	private GridTab curTab;
@@ -38,10 +40,10 @@ public class MobileLookup {
 	private String[] m_searchFields;
 	private String[] m_searchLabels;
 
-	public MobileLookup(MobileSessionCtx wsc, WebField webField, GridTab curTab) {
+	public MobileLookup(WebField webField, GridTab curTab) {
 
 		this.curTab = curTab;
-		this.wsc = wsc;
+		ctx = WNavigatorUI.getContext();
 		this.webField = webField;
 
 		//  Get Mandatory Parameters
@@ -189,8 +191,8 @@ public class MobileLookup {
 			sqlCount = new StringBuffer("SELECT count(*) FROM " + tableName + " WHERE AD_Client_ID=?");
 
 			if (whereClause != null && curTab != null) {
-				sqlSelect.append(" AND " + Env.parseContext(wsc.ctx, curTab.getWindowNo(), whereClause, false)).append(where);
-				sqlCount.append(" AND " + Env.parseContext(wsc.ctx, curTab.getWindowNo(), whereClause, false)).append(where);
+				sqlSelect.append(" AND " + Env.parseContext(Env.getCtx(), curTab.getWindowNo(), whereClause, false)).append(where);
+				sqlCount.append(" AND " + Env.parseContext(Env.getCtx(), curTab.getWindowNo(), whereClause, false)).append(where);
 			}
 			if (orderBy != null)
 				sqlSelect.append(" ORDER BY " + orderBy);
@@ -214,7 +216,7 @@ public class MobileLookup {
 			pstmt = DB.prepareStatement(sqlSelect.toString(),
 					ResultSet.TYPE_SCROLL_INSENSITIVE,	ResultSet.CONCUR_READ_ONLY, null);
 
-			pstmt.setInt(1, Env.getAD_Client_ID(wsc.ctx));
+			pstmt.setInt(1, Env.getAD_Client_ID(Env.getCtx()));
 			rs = pstmt.executeQuery();
 
 			MobileLookupGenericObject object;
