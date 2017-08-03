@@ -22,6 +22,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -37,7 +38,7 @@ public class WNavigatorUI extends UI {
 	private static final long serialVersionUID = 7582342143333788115L;
 	private static final String DEFAULT_UI_PATH = "/m";
 	private static final String VAADIN_THEME_DEFAULT = "mobiletheme";
-    private  static final String SESSION_CTX = "VaadinSessionContext";
+    private static final String SESSION_CTX = "VaadinSessionContext";
 
 	// 
 	private Navigator navigator;
@@ -54,7 +55,7 @@ public class WNavigatorUI extends UI {
 	protected void init(VaadinRequest request) {
 		setTheme(MSysConfig.getValue("VAADIN_THEME", VAADIN_THEME_DEFAULT));
 		getPage().setTitle(MSysConfig.getValue(MSysConfig.ZK_BROWSER_TITLE, "iDempiere"));
-
+		
 		Properties ctx = new Properties();
 		ServerContext.setCurrentInstance(ctx);
 		String langSession = Env.getContext(ctx, Env.LANGUAGE);
@@ -71,8 +72,8 @@ public class WNavigatorUI extends UI {
 				e1.printStackTrace();
 			}
 
-		request.getWrappedSession().setMaxInactiveInterval(MobileEnv.TIMEOUT);
-
+		VaadinSession.getCurrent().getSession().setMaxInactiveInterval(VEnv.TIMEOUT);
+		
 		//  Check DB connection
 		if (!DB.isConnected())
 		{
@@ -88,6 +89,7 @@ public class WNavigatorUI extends UI {
 		navigator = new Navigator(this, this);
 		// Create and register the views
 		navigator.addView(WLoginPanel.NAME, new WLoginPanel(this));
+		navigator.setErrorView(new WLoginPanel(this));
 	}
 
 	public void loginOk(String userName, KeyNamePair[] clientsKNPairs) {
@@ -169,5 +171,5 @@ public class WNavigatorUI extends UI {
 		getSession().close();
 		VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
 	}
-
+	
 }
