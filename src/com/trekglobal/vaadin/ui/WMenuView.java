@@ -13,7 +13,6 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 
-import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
@@ -32,23 +31,23 @@ public class WMenuView extends AbstractToolbarView implements Button.ClickListen
 	private Map<Button, MTreeNode> mapButtonNode = new HashMap<Button, MTreeNode>();
 	private MTreeNode currentNode;
 	
-	public WMenuView(MobileSessionCtx wsc, WNavigatorUI loginPage) {
-		super(wsc, loginPage);
+	public WMenuView(WNavigatorUI loginPage) {
+		super(loginPage);
 	}
 
 	protected void initComponents() {
 
-		windowTitle = Util.cleanAmp(Msg.getMsg(Env.getCtx(),"Menu"));
+		windowTitle = Util.cleanAmp(Msg.getMsg(ctx,"Menu"));
 		header = new WHeader(this, true, true);
 		header.setLogoutButton();
 		content = new CssLayout();
 
-		int AD_Role_ID = Env.getAD_Role_ID(wsc.ctx);
+		int AD_Role_ID = Env.getAD_Role_ID(ctx);
 
 		//  Load Menu Structure     ----------------------
 		int AD_Tree_ID = getTreeId(AD_Role_ID);
 
-		MTree tree = new MTree(wsc.ctx, AD_Tree_ID, false, false, null);
+		MTree tree = new MTree(ctx, AD_Tree_ID, false, false, null);
 		//	Trim tree
 		MTreeNode root = tree.getRoot();
 		generateMenu(root);

@@ -13,7 +13,6 @@ import org.compiere.util.Login;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 
-import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.trekglobal.vaadin.mobile.VEnv;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
@@ -49,13 +48,13 @@ public class WLoginPanel extends AbstractToolbarView {
 	
 	protected boolean email_login = MSysConfig.getBooleanValue(MSysConfig.USE_EMAIL_FOR_LOGIN, false);
 	
-	public WLoginPanel(MobileSessionCtx wsc, WNavigatorUI loginPage) {
-		super(wsc, loginPage);
+	public WLoginPanel(WNavigatorUI loginPage) {
+		super(loginPage);
 	}
 	
 	protected void initComponents() {
 
-    	String AD_Language = wsc.ctx.getProperty(Env.LANGUAGE, Language.getAD_Language(this.getLocale()));
+    	String AD_Language = Env.getContext(ctx, Env.LANGUAGE);
 		windowTitle = Msg.getMsg(AD_Language, "Login");
 		String usrText = Msg.getMsg(AD_Language, "User");
 		if (email_login)
@@ -164,9 +163,9 @@ public class WLoginPanel extends AbstractToolbarView {
 		Language language = new Language(tmp.getName(), tmp.getAD_Language(), tmp.getLocale(), tmp.isDecimalPoint(),
 				tmp.getDateFormat().toPattern(), tmp.getMediaSize());
 		
-    	Env.verifyLanguage(wsc.ctx, language);
-    	Env.setContext(wsc.ctx, Env.LANGUAGE, language.getAD_Language());
-    	Env.setContext(wsc.ctx, VEnv.LOCALE, language.getLocale().toString());
+    	Env.verifyLanguage(ctx, language);
+    	Env.setContext(ctx, Env.LANGUAGE, language.getAD_Language());
+    	Env.setContext(ctx, VEnv.LOCALE, language.getLocale().toString());
 
 		return language;
 	}
@@ -177,20 +176,21 @@ public class WLoginPanel extends AbstractToolbarView {
 	 **/
 	public void validateLogin() {
 
-		Login login = new Login(wsc.ctx);
+    	syncCtx();
+		Login login = new Login(ctx);
 		String userId = txtUserId.getValue();
         String userPassword = pwdField.getValue();
         
 		KeyNamePair[] clients = null;
 		
-		VaadinSession currSess = this.getUI().getSession();
+		VaadinSession currSess = getUI().getSession();
 		clients = login.getClients(userId, userPassword);
 		
 		if (clients == null || clients.length == 0)
         {
         	String loginErrMsg = login.getLoginErrMsg();
         	if (Util.isEmpty(loginErrMsg))
-        		loginErrMsg = Msg.getMsg(wsc.ctx, "FailedLogin", true);
+        		loginErrMsg = Msg.getMsg(ctx, "FailedLogin", true);
         	
         	if (loginErrMsg != null)
     			Notification.show(loginErrMsg,
@@ -198,7 +198,8 @@ public class WLoginPanel extends AbstractToolbarView {
         } else {
     		Language language = findLanguage(selectedLanguage);
 
-        	Env.setContext(wsc.ctx, UserPreference.LANGUAGE_NAME, language.getName()); // Elaine 2009/02/06
+        	Env.setContext(ctx, UserPreference.LANGUAGE_NAME, language.getName()); // Elaine 2009/02/06
+    		Env.setContext(ctx, "#UIClient", "vaadin");
 
             if (!login.isPasswordExpired())
             	loginPage.loginOk(userId, clients);
