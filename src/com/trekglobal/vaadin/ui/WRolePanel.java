@@ -1,6 +1,5 @@
 package com.trekglobal.vaadin.ui;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.compiere.util.Login;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
 
-import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.ui.Button;
@@ -47,8 +45,8 @@ public class WRolePanel extends AbstractToolbarView {
 	protected KeyNamePair[]	clients;
 	private boolean roleChangedByUser = true;
 
-	public WRolePanel(MobileSessionCtx wsc, WNavigatorUI loginPage, String userName, KeyNamePair[] clientsKNPairs) {
-		super(wsc, loginPage);
+	public WRolePanel(WNavigatorUI loginPage, String userName, KeyNamePair[] clientsKNPairs) {
+		super(loginPage);
 		this.userName = userName;
 		clients = clientsKNPairs;
 		
@@ -56,18 +54,17 @@ public class WRolePanel extends AbstractToolbarView {
 	}
 	
 	public void initClient() {
-		login = new Login(wsc.ctx);
+		login = new Login(ctx);
 		
 		if (clients.length == 1) {
-        	Env.setContext(wsc.ctx, "#AD_Client_ID", clients[0].getID());
-        	Env.setContext(Env.getCtx(), "#AD_Client_ID", clients[0].getID());
+        	Env.setContext(ctx, Env.AD_CLIENT_ID, clients[0].getID());
         }
 	}
 	
 	protected void initComponents() {
 
-		windowTitle = Msg.getMsg(Env.getCtx(), "SelectRole");
-    	Language language = Env.getLanguage(wsc.ctx);
+		windowTitle = Msg.getMsg(ctx, "SelectRole");
+    	Language language = Env.getLanguage(ctx);
     	
     	//Header
     	header = new WHeader(this, false, false);
@@ -144,17 +141,15 @@ public class WRolePanel extends AbstractToolbarView {
 	
     private void setUserID() {
     	if (clientSelector.getSelectedItem() != null) {
-        	Env.setContext(wsc.ctx, "#AD_Client_ID", (String) clientSelector.getSelectedItem().get().getID());
-        	Env.setContext(Env.getCtx(), "#AD_Client_ID", (String) clientSelector.getSelectedItem().get().getID());
+        	Env.setContext(ctx, Env.AD_CLIENT_ID, (String) clientSelector.getSelectedItem().get().getID());
     	} else {
-        	Env.setContext(wsc.ctx, "#AD_Client_ID", (String) null);
-        	Env.setContext(Env.getCtx(), "#AD_Client_ID", (String) null);
+        	Env.setContext(ctx, Env.AD_CLIENT_ID, (String) null);
     	}
-    	MUser user = MUser.get(wsc.ctx, userName);
+    	MUser user = MUser.get(ctx, userName);
     	if (user != null) {
-    		Env.setContext(wsc.ctx, "#AD_User_ID", user.getAD_User_ID());
-    		Env.setContext(wsc.ctx, "#AD_User_Name", user.getName());
-    		Env.setContext(wsc.ctx, "#SalesRep_ID", user.getAD_User_ID());
+    		Env.setContext(ctx, Env.AD_USER_ID, user.getAD_User_ID());
+    		Env.setContext(ctx, "#AD_User_Name", user.getName());
+    		Env.setContext(ctx, "#SalesRep_ID", user.getAD_User_ID());
     	}
     }
     
@@ -179,7 +174,7 @@ public class WRolePanel extends AbstractToolbarView {
             }
 
             //force reload of default role
-            MRole.getDefault(wsc.ctx, true);
+            MRole.getDefault(ctx, true);
             
     		// If we have only one role, we can hide the combobox - metas-2009_0021_AP1_G94
     		/*if (clients.length == 1 && roleSelector. == 1 && ! MSysConfig.getBooleanValue(MSysConfig.ALogin_ShowOneRole, true))
@@ -237,6 +232,7 @@ public class WRolePanel extends AbstractToolbarView {
     
     public void validateRoles() {
     	
+    	syncCtx();
     	KeyNamePair selectedClient = clientSelector.getSelectedItem().get();
     	KeyNamePair selectedRole   = roleSelector.getSelectedItem().get();
     	KeyNamePair selectedOrg    = orgSelector.getSelectedItem().get();
@@ -255,18 +251,13 @@ public class WRolePanel extends AbstractToolbarView {
 
 		String msg = login.loadPreferences(orgKNPair, null, null, null);
 
-		//	Don't Show Acct/Trl Tabs on HTML UI
-		Env.setContext(wsc.ctx, "#ShowAcct", "N");
-		Env.setContext(wsc.ctx, "#ShowTrl", "N");	
-		Env.setContext(wsc.ctx, "#Date", new Timestamp(System.currentTimeMillis()));    //  JDBC format
-		
 		//No error on load preferences
         if (Util.isEmpty(msg)) {
             msg = login.validateLogin(orgKNPair);
         }
         if (!Util.isEmpty(msg)) {
-			Env.getCtx().clear();
-			Notification.show(Msg.getMsg(wsc.ctx, "RoleInconsistent"),
+			ctx.clear();
+			Notification.show(Msg.getMsg(ctx, "RoleInconsistent"),
 					Type.ERROR_MESSAGE);
 			
 			return;
@@ -277,7 +268,7 @@ public class WRolePanel extends AbstractToolbarView {
     }
     
     private void showFillMandatoryErrorMessage(String reason) {
-		Notification.show(Msg.getMsg(wsc.ctx, "FillMandatory") + reason,
+		Notification.show(Msg.getMsg(ctx, "FillMandatory") + reason,
 				Type.ERROR_MESSAGE);
     }
 

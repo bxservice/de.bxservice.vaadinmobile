@@ -4,7 +4,6 @@ import org.compiere.model.GridTab;
 
 import com.trekglobal.vaadin.mobile.MobileLookup;
 import com.trekglobal.vaadin.mobile.MobileLookupGenericObject;
-import com.trekglobal.vaadin.mobile.MobileSessionCtx;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PopupView;
@@ -18,15 +17,15 @@ public abstract class AbstractWebFieldView extends AbstractToolbarView implement
 	protected PopupView lookupPopup;
 	protected WLookupView lookupContent;
 
-	public AbstractWebFieldView(MobileSessionCtx wsc, WNavigatorUI loginPage) {
-		super(wsc, loginPage);
+	public AbstractWebFieldView(WNavigatorUI loginPage) {
+		super(loginPage);
 	}
 	
 	public abstract GridTab getCurTab();
 	
 	@Override
 	public void onLookUp(WebField webField) {
-		MobileLookup lookup = new MobileLookup(wsc, webField, getCurTab());
+		MobileLookup lookup = new MobileLookup(webField, getCurTab());
 
 		if (!lookup.isDataSafe()) {
 			Notification.show("ParameterMissing",

@@ -20,6 +20,11 @@ import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Trx;
 
+import com.trekglobal.vaadin.ui.WNavigatorUI;
+
+/**
+ * @author druiz
+ */
 public class MobileProcess {
 
 	/**	Logger			*/
@@ -28,9 +33,9 @@ public class MobileProcess {
 	private Properties ctx;
 	private boolean processOK = false;
 
-	public MobileProcess(Properties ctx, MProcess process) {
+	public MobileProcess(MProcess process) {
 		this.process = process;
-		this.ctx = ctx;
+		ctx = WNavigatorUI.getContext();
 	}
 
 	public String runProcess(int AD_Window_ID, int AD_Table_ID, int AD_Record_ID, 

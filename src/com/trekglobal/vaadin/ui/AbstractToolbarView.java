@@ -1,6 +1,9 @@
 package com.trekglobal.vaadin.ui;
 
-import com.trekglobal.vaadin.mobile.MobileSessionCtx;
+import java.util.Properties;
+
+import org.adempiere.util.ServerContext;
+
 import com.vaadin.ui.CssLayout;
 
 public abstract class AbstractToolbarView extends CssLayout implements IToolbarView {
@@ -12,16 +15,16 @@ public abstract class AbstractToolbarView extends CssLayout implements IToolbarV
 	protected boolean initialized = false;
 
 	protected WNavigatorUI loginPage;
-	protected MobileSessionCtx wsc;
 	protected String windowTitle ="";
+    protected Properties ctx;
 	
 	//Main UI components
 	protected CssLayout content;
 	protected WHeader   header;
 	
-	public AbstractToolbarView(MobileSessionCtx wsc, WNavigatorUI loginPage) {
-		this.wsc = wsc;
+	public AbstractToolbarView(WNavigatorUI loginPage) {
 		this.loginPage = loginPage;
+		ctx = WNavigatorUI.getContext();
 	}
 	
 	protected abstract void initComponents();
@@ -35,6 +38,10 @@ public abstract class AbstractToolbarView extends CssLayout implements IToolbarV
         initComponents();
         init();
         initialized = true;
+	}
+	
+	protected void syncCtx() {
+		ServerContext.setCurrentInstance(ctx);
 	}
 	
 	protected void openMenu() {
