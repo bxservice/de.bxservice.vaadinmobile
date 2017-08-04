@@ -14,7 +14,7 @@ import org.compiere.util.KeyNamePair;
 import org.compiere.util.Language;
 import org.compiere.util.Msg;
 
-import com.trekglobal.vaadin.mobile.MobileEnv;
+import com.trekglobal.vaadin.mobile.MobileServlet;
 import com.trekglobal.vaadin.mobile.VEnv;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Viewport;
@@ -59,18 +59,17 @@ public class WNavigatorUI extends UI {
 		Properties ctx = new Properties();
 		ServerContext.setCurrentInstance(ctx);
 		String langSession = Env.getContext(ctx, Env.LANGUAGE);
-		if (langSession == null || langSession.length() <= 0)
-		{
+		if (langSession == null || langSession.length() <= 0) {
 			langSession = Language.getAD_Language(getLocale());
 			Env.setContext(ctx, Env.LANGUAGE, langSession);
 		}
-
-		if (!MobileEnv.initWeb(VaadinServlet.getCurrent().getServletConfig()))
-			try {
-				throw new ServletException("WLogin.init");
-			} catch (ServletException e1) {
-				e1.printStackTrace();
-			}
+		
+		try {
+			MobileServlet.init(VaadinServlet.getCurrent().getServletConfig());
+		} catch(ServletException e) {
+			e.printStackTrace();
+			return;
+		}
 
 		VaadinSession.getCurrent().getSession().setMaxInactiveInterval(VEnv.TIMEOUT);
 		
