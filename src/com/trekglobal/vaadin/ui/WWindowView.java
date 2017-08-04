@@ -73,7 +73,6 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	private GridWindow mWindow;
 	private GridTab curTab;
 	private boolean singleRowSelected = false;
-	private boolean saveError         = false;
 
 	//UI
 	private CssLayout singleRowSection;
@@ -497,8 +496,8 @@ IFindListener, Button.ClickListener, DataStatusListener {
 			updateTabMenu();
 
 		if (singleRowSelected) {
-			if (saveError)
-				curTab.dataIgnore();
+			// just in case
+			curTab.dataIgnore();
 
 			generateMultirowView(singleRowSelected);
 		} else {
@@ -755,7 +754,6 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		boolean error = mobileWindow.saveRecord(webFields, null);
 
 		if (error) {
-			saveError = true;
 			generateSingleRowView(false);
 			return;
 		}
@@ -763,12 +761,12 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		//  save it - of errors ignore changes
 		if (!curTab.dataSave(true)) {
 			//curTab.dataIgnore();
-			saveError = true;
 			generateSingleRowView(false);
 			return;
 		}
 		log.fine("done");
-
+		
+		curTab.dataRefreshAll();
 		generateSingleRowView(true);
 	}
 
