@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 
 import org.compiere.model.GridField;
@@ -17,7 +16,6 @@ import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 
-import com.trekglobal.vaadin.ui.WNavigatorUI;
 import com.trekglobal.vaadin.ui.WebField;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -26,7 +24,6 @@ public class MobileLookup {
 
 	/**	Logger			*/
 	protected CLogger log = CLogger.getCLogger(getClass());
-	private Properties ctx;
 	
 	private String header = "";
 	private GridTab curTab;
@@ -43,7 +40,6 @@ public class MobileLookup {
 	public MobileLookup(WebField webField, GridTab curTab) {
 
 		this.curTab = curTab;
-		ctx = WNavigatorUI.getContext();
 		this.webField = webField;
 
 		//  Get Mandatory Parameters
