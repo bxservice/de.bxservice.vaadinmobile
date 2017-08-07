@@ -26,6 +26,7 @@ public abstract class AbstractWebFieldView extends AbstractToolbarView implement
 	@Override
 	public void onLookUp(WebField webField) {
 		MobileLookup lookup = new MobileLookup(webField, getCurTab());
+		syncCtx();
 
 		if (!lookup.isDataSafe()) {
 			Notification.show("ParameterMissing",
