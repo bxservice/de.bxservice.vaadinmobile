@@ -86,8 +86,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
     	syncCtx();
 		MMenu menu = new MMenu(ctx, AD_Menu_ID, null);
 
-		//TODO: Change to menu.getAD_Window_ID() instead of 0 when the ctx is fixed
-		GridWindowVO mWindowVO = GridWindowVO.create(ctx, s_WindowNo++, 0, AD_Menu_ID);
+		GridWindowVO mWindowVO = GridWindowVO.create(ctx, s_WindowNo++, menu.getAD_Window_ID(), AD_Menu_ID);
 		if (mWindowVO == null) {
 			String msg = Msg.translate(ctx, "AD_Window_ID") + " "
 					+ Msg.getMsg(ctx, "NotFound") + ", ID=" + menu.getAD_Window_ID() + "/" + AD_Menu_ID;
