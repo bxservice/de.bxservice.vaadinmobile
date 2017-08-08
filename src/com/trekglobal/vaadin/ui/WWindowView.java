@@ -389,15 +389,8 @@ IFindListener, Button.ClickListener, DataStatusListener {
 
 				boolean hasDependents = curTab.hasDependants(columnName);
 
-				addField(field, oData, hasDependents, recordID, tableID, isReadOnly /*first time open -> curTab.isReadOnly()*/, i, role);
+				addField(field, oData, hasDependents, recordID, tableID, isReadOnly /*first time open -> curTab.isReadOnly()*/, role);
 
-				/*String dispLogic = field.getDisplayLogic();
-				if (dispLogic != null && dispLogic.length() > 0) {
-					dispLogic = dispLogic.replace('\'', '"');   //  replace ' with "
-					scriptSrc.append("document.").append(FORM_NAME)
-					.append(".").append(columnName)
-					.append(".displayLogic='").append(dispLogic).append("';\n");
-				}*/
 			} 
 			// Processes
 			else if (field.isDisplayed(true) && field.getDisplayType() == DisplayType.Button) {
@@ -426,7 +419,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	 *  @param hasDependents has Callout function(s)
 	 */
 	public void addField(GridField field, Object oData, boolean hasDependents, int recordID, 
-			int tableID, boolean tabRO, int fieldNumber, MRole role) {
+			int tableID, boolean tabRO, MRole role) {
 
 		HorizontalLayout line = new HorizontalLayout();
 		String columnName = field.getColumnName();
@@ -469,8 +462,8 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		WebField wField = new WebField (this, ctx, columnName, field.getHeader(), field.getDescription(),
 				displayType, field.getFieldLength(), field.getDisplayLength(), field.isLongField(),
 				fieldRO, field.isMandatory(false), error, hasDependents, hasCallout, 
-				field.getAD_Process_ID(), field.getAD_Window_ID(), recordID, tableID, 
-				fieldNumber, field.getDefault(), field.getCallout(), curTab, field, role);
+				field.getAD_Process_ID(), field.getAD_Window_ID(), recordID, tableID,
+				field.getDefault(), field.getCallout(), curTab, field, role);
 
 		Label fieldLabel = wField.getLabel(!tabRO);
 		fieldLabel.addStyleName("bxwindow-label");
@@ -625,13 +618,12 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		header.addStyleName("bxprocesspara-title");
 		popupContent.addComponent(header);
 
-		int fieldNo = 0;
 		for (MProcessPara para : process.getParameters()) {
 
 			WebField wField = new WebField(this, ctx, para.getColumnName(), 
 					para.getName(), para.getDescription(), para.getAD_Reference_ID(), para.getFieldLength(), 
 					para.getFieldLength(), para.isMandatory(), para.getAD_Process_ID(),
-					mWindow.getWindowNo(),curTab.getRecord_ID(),curTab.getAD_Table_ID(), fieldNo++, null);
+					mWindow.getWindowNo(),curTab.getRecord_ID(),curTab.getAD_Table_ID(), null);
 
 			Object defaultValue = wField.getDefault(para.getDefaultValue());
 
@@ -652,7 +644,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 				WebField wFieldforRange =  new WebField(this, ctx, para.getColumnName(), 
 						para.getName(), para.getDescription(), para.getAD_Reference_ID(), para.getFieldLength(), 
 						para.getFieldLength(), para.isMandatory(), para.getAD_Process_ID(),
-						mWindow.getWindowNo(),curTab.getRecord_ID(),curTab.getAD_Table_ID(), fieldNo++, 
+						mWindow.getWindowNo(),curTab.getRecord_ID(),curTab.getAD_Table_ID(), 
 						para.getColumnName()+"_2");
 
 				Component toField = wFieldforRange.getField(para.getLookup(), para.getDefaultValue2());
