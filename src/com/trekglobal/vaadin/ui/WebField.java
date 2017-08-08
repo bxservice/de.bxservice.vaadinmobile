@@ -1064,8 +1064,8 @@ public class WebField {
 			}
 			if (componentField instanceof CheckBox)
 				return String.valueOf(((CheckBox) componentField).getValue());
-			if (componentField instanceof TextField)
-				return ((TextField) componentField).getValue();
+			if (componentField instanceof AbstractTextField)
+				return ((AbstractTextField) componentField).getValue();
 			if (componentField instanceof DateField) {
 				LocalDate data = ((DateField) componentField).getValue();
 				if (data != null) {
