@@ -339,16 +339,15 @@ public class WebField {
 	 */
 	private Component getStringField(String data) {
 
-		if (m_readOnly)
-			return getDiv(data);
-
-		TextField string = null;
-
 		Boolean isEncrypted = false;
 
 		if (m_Field != null)
 			isEncrypted = m_Field.isEncryptedField();
 
+		if (m_readOnly && !isEncrypted)
+			return getDiv(data);
+
+		TextField string = null;
 
 		if (isEncrypted)
 			string = new PasswordField(null, data);
