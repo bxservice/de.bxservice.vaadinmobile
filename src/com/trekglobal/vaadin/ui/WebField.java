@@ -23,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -97,9 +96,6 @@ public class WebField {
 	private boolean	m_error;
 	private boolean	m_hasDependents;
 	private boolean	m_hasCallout;
-	private int	m_fieldNumber;
-	private Object	m_dataDisplay;
-	//Modified by Rob Klein 4/29/07
 	
 	private Component componentField;
 	private String oldValue;
@@ -127,7 +123,7 @@ public class WebField {
 			int displayType, int fieldLength, int displayLength, boolean longField, 
 			boolean readOnly, boolean mandatory, boolean error, 
 			boolean hasDependents, boolean hasCallout, int AD_Process_ID,
-			int AD_Window_ID, int AD_Record_ID, int AD_Table_ID, int fieldNumber, Object defaultvalue, 
+			int AD_Window_ID, int AD_Record_ID, int AD_Table_ID, Object defaultvalue, 
 			String callOut, GridTab mTab, GridField mField, MRole mRole, boolean rangeTo) {
 		super();
 		this.ctx = ctx;
@@ -159,7 +155,6 @@ public class WebField {
 		m_error = error;
 		m_hasDependents = hasDependents;
 		m_hasCallout = hasCallout;
-		m_fieldNumber = fieldNumber;
 		m_Field = mField;
 		if (rangeTo)
 			m_SuffixTo = "T";
@@ -171,13 +166,13 @@ public class WebField {
 			int displayType, int fieldLength, int displayLength, boolean longField, 
 			boolean readOnly, boolean mandatory, boolean error, 
 			boolean hasDependents, boolean hasCallout, int AD_Process_ID,
-			int AD_Window_ID, int AD_Record_ID, int AD_Table_ID, int fieldNumber, Object defaultvalue, 
+			int AD_Window_ID, int AD_Record_ID, int AD_Table_ID, Object defaultvalue, 
 			String callOut, GridTab mTab, GridField mField, MRole mRole) {
 		this(fieldListener, ctx, columnName, name, description,
 				displayType, fieldLength, displayLength, longField, 
 				readOnly, mandatory, error, 
 				hasDependents, hasCallout, AD_Process_ID,
-				AD_Window_ID, AD_Record_ID, AD_Table_ID, fieldNumber, defaultvalue, 
+				AD_Window_ID, AD_Record_ID, AD_Table_ID, defaultvalue, 
 				callOut, mTab, mField, mRole, false);
 	}
 	
@@ -186,13 +181,12 @@ public class WebField {
 	 */
 	public WebField(IWebFieldListener fieldListener, Properties ctx, String columnName, String name, String description,
 			int displayType, int fieldLength, int displayLength, boolean mandatory, 
-			int AD_Process_ID, int AD_Window_ID, int AD_Record_ID, int AD_Table_ID, 
-			int fieldNumber, String key) {
+			int AD_Process_ID, int AD_Window_ID, int AD_Record_ID, int AD_Table_ID, String key) {
 		this(fieldListener, ctx, columnName, name, description,
 				displayType, fieldLength, displayLength, false, 
 				false, mandatory, false, 
 				false, false, AD_Process_ID,
-				AD_Window_ID, AD_Record_ID, AD_Table_ID, fieldNumber, null, 
+				AD_Window_ID, AD_Record_ID, AD_Table_ID, null, 
 				null, null, null, null, false);
 		
 		if (key == null)
@@ -599,7 +593,6 @@ public class WebField {
 	 *	@param dataValue default value
 	 *	@return selction td
 	 */
-	@SuppressWarnings("rawtypes")
 	private Component getSelectField(Lookup lookup, String dataValue) {		
 
 		if (dataValue.length()<1 && m_defaultObject != null)	{
@@ -652,7 +645,6 @@ public class WebField {
 				data.add(new KeyNamePair(-1, value.getName()));
 				data.add(new KeyNamePair(Integer.parseInt(value.getID()), value.getName()));
 			}
-			m_dataDisplay = value.getName();
 		} else {
 			for (int i = 0; i < size; i++) {
 				boolean isNumber = list[0] instanceof KeyNamePair;
@@ -664,7 +656,6 @@ public class WebField {
 					data.add(new KeyNamePair(key, name));
 					if (dataValue.equals(String.valueOf(key))) {
 						selectedObject = data.get(data.size()-1);
-						m_dataDisplay = name;
 					}				
 				} else if (isNumber) {
 					KeyNamePair p = (KeyNamePair)list[i];
@@ -673,7 +664,6 @@ public class WebField {
 					data.add(new KeyNamePair(key, name));
 					if (dataValue.equals(String.valueOf(key))) {
 						selectedObject = data.get(data.size()-1);
-						m_dataDisplay =name;
 					}
 				} else {
 					ValueNamePair p = (ValueNamePair)list[i];
@@ -687,7 +677,6 @@ public class WebField {
 					data.add(new ValueNamePair(key2, name));
 					if (dataValue.equals(String.valueOf(key2))) {
 						selectedObject = data.get(data.size()-1);
-						m_dataDisplay =name;
 					}
 				}
 			}			
