@@ -499,8 +499,10 @@ IFindListener, Button.ClickListener, DataStatusListener {
 				setCurTab(curTab.getParentTab());
 				curTab.navigate(lineNo);
 				generateSingleRowView(true);
-			} else
+			} else {
+				Env.clearWinContext(s_WindowNo);
 				backButton();
+			}
 		}
 	}
 
