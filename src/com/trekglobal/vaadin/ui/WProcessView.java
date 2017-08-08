@@ -153,13 +153,11 @@ public class WProcessView extends AbstractWebFieldView {
 			CssLayout singleRowSection = new CssLayout();
 			singleRowSection.addStyleName("singlerow-content");
 			
-			int fieldNo = 0;
 			for (MProcessPara para : process.getParameters()) {
 				WebField wField = new WebField(this, ctx, para.getColumnName(), 
 						para.get_Translation("Name"), para.get_Translation("Description"),
 						para.getAD_Reference_ID(), para.getFieldLength(), para.getFieldLength(),
-						para.isMandatory(), para.getAD_Process_ID(),0,0,0,
-						fieldNo++, null);
+						para.isMandatory(), para.getAD_Process_ID(),0,0,0, null);
 
 				//Get the default Value of the process
 				Object defaultValue = wField.getDefault(para.getDefaultValue());
@@ -183,7 +181,7 @@ public class WProcessView extends AbstractWebFieldView {
 					WebField wFieldforRange = new WebField(this, ctx, para.getColumnName(), 
 							para.getName(), para.getDescription(), para.getAD_Reference_ID(), 
 							para.getFieldLength(),para.getFieldLength(), para.isMandatory(), 
-							para.getAD_Process_ID(),0,0,0, fieldNo++, para.getColumnName()+"_2");
+							para.getAD_Process_ID(),0,0,0, para.getColumnName()+"_2");
 
 					Object defaultValueTo = wFieldforRange.getDefault(para.getDefaultValue2());
 					HorizontalLayout rangeRow = new HorizontalLayout();
