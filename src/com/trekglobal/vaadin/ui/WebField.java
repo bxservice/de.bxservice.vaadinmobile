@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -261,9 +262,8 @@ public class WebField {
 		else if (m_displayType == DisplayType.Button) {
 			componentField = getButtonField ();
 		}
-		//Modified by Rob Klein 4/29/07
 		else if (DisplayType.isDate(m_displayType)) {
-			//componentField = getPopupDateField(data);
+			componentField = getPopupDateField(data);
 		}
 		else if (DisplayType.isNumeric(m_displayType)) {
 			componentField = getNumberField(data);
@@ -554,37 +554,31 @@ public class WebField {
 	 */
 	private Component getPopupDateField(Object data) {
 
-		String dataValue = (data == null) ? "" : data.toString();	
+		String dataValue = (data == null) ? "" : data.toString();
 		String formattedData = "";
-
+		SimpleDateFormat dateFormat = DisplayType.getDateFormat(m_displayType, Env.getLanguage(ctx));
+		
 		try {
 			if (data == null)
 				;
-			else if (m_displayType == DisplayType.DateTime) {
-				if (dataValue.equals("@#Date@"))
-					formattedData = DisplayType.getDateFormat(DisplayType.DateTime, Env.getLanguage(ctx)).format(new java.util.Date());
-				else
-					formattedData = DisplayType.getDateFormat(DisplayType.DateTime, Env.getLanguage(ctx)).format(data);			
-			}
-			else if (m_displayType == DisplayType.Date) {
-				if (dataValue.equals("@#Date@"))
-					formattedData =  DisplayType.getDateFormat(DisplayType.Date, Env.getLanguage(ctx)).format(new java.util.Date());
-				else
-					formattedData = DisplayType.getDateFormat(DisplayType.Date, Env.getLanguage(ctx)).format(data);			
-			}
+			else if (dataValue.equals("@#Date@"))
+				formattedData = dateFormat.format(new java.util.Date());
+			else
+				formattedData = dateFormat.format(data);
 		} catch (IllegalArgumentException e) {
 			// invalid date format
 			formattedData = "Invalid date format: " + data;
-		}		
+		}
 
 		if (m_readOnly)
 			return getDiv(formattedData);
 
 		DateField display = new DateField();
-		display.setValue((LocalDate) data);
-		display.setDateFormat(DisplayType.getDateFormat(DisplayType.Date, Env.getLanguage(ctx)).toPattern());
+		if (data != null)
+			display.setValue(((Timestamp) data).toLocalDateTime().toLocalDate());
+		display.setDateFormat(dateFormat.toPattern());
 		display.setId(m_columnName + "F" + m_SuffixTo);
-		display.setReadOnly(true);		
+		display.setReadOnly(m_readOnly);
 
 		//
 		if (m_error)
@@ -1082,8 +1076,14 @@ public class WebField {
 				return String.valueOf(((CheckBox) componentField).getValue());
 			if (componentField instanceof TextField)
 				return ((TextField) componentField).getValue();
-			if (componentField instanceof DateField)
-				return ((DateField) componentField).getValue().toString();
+			if (componentField instanceof DateField) {
+				LocalDate data = ((DateField) componentField).getValue();
+				if (data != null) {
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DisplayType.getDateFormat(m_displayType, Env.getLanguage(ctx)).toPattern());
+					String formattedString = data.format(formatter);
+					return formattedString;
+				}
+			}
 		}
 		return newValue;
 	}

@@ -215,6 +215,7 @@ public class MobileWindow {
 				ts = new Timestamp(d.getTime());
 			}
 			catch (Exception e) {
+				e.printStackTrace();
 				return ERROR;
 			}
 			return ts;
