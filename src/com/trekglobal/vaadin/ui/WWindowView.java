@@ -517,6 +517,11 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	@Override
 	public void onNewButtonPressed() {
     	syncCtx();
+    	if (!curTab.isInsertRecord()) {
+            log.warning("Insert Record disabled for Tab");
+            return;
+    	}
+
 		if (!curTab.dataNew(false))
 			curTab.dataIgnore();
 		generateSingleRowView(false);
