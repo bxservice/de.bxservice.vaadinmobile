@@ -522,6 +522,7 @@ public class WebField {
 			dataDisplay = Msg.getCleanMsg(ctx, "select")+ "...";
 		
 		Button display = new Button(dataDisplay);
+		display.setData(dataValue);
 		display.addStyleName("bxpopup-button");
 		
 		if (m_displayType == DisplayType.Location ){
@@ -1037,8 +1038,10 @@ public class WebField {
 	public void setNewValue(String newValue, String dataDisplay) {
 		this.newValue = newValue;
 		if (componentField != null && !m_readOnly) {
-			if (componentField instanceof Button)
+			if (componentField instanceof Button) { 
 				((Button) componentField).setCaption(dataDisplay);
+				((Button) componentField).setData(newValue);
+			}
 		}
 	}
 	
@@ -1073,6 +1076,8 @@ public class WebField {
 					return formattedString;
 				}
 			}
+			if (componentField instanceof Button)
+				return (String) ((Button) componentField).getData();
 		}
 		return newValue;
 	}
