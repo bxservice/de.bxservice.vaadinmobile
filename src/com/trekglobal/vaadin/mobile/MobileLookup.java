@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.adempiere.util.ServerContext;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.model.MProcess;
@@ -16,6 +17,7 @@ import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 
+import com.trekglobal.vaadin.ui.WNavigatorUI;
 import com.trekglobal.vaadin.ui.WebField;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -145,6 +147,7 @@ public class MobileLookup {
 
 	public List<MobileLookupGenericObject> getLookupRows(String where) {
 		List<MobileLookupGenericObject> rows = new ArrayList<MobileLookupGenericObject>();
+		ServerContext.setCurrentInstance(WNavigatorUI.getContext());
 
 		StringBuffer sqlSelect = null;
 		StringBuffer sqlCount = null;
