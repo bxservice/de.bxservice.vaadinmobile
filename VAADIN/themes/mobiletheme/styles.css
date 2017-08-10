@@ -12714,6 +12714,9 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mobiletheme .bxwindow-tabs {
+	padding-bottom: 45px !important;
+	border-radius: 0;
+	border: none;
 	background-color: #6d84a2;
 	position: fixed;
 	top: 45px;
