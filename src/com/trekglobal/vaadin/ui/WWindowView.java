@@ -747,18 +747,13 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	@Override
 	public void onSaveButtonPressed() {
     	syncCtx();
-		MobileWindow mobileWindow = new MobileWindow(curTab);
-
-		boolean error = mobileWindow.saveRecord(webFields, null);
-
-		if (error) {
-			generateSingleRowView(false);
-			return;
-		}
+    	MobileWindow mobileWindow = new MobileWindow(curTab);
+    	mobileWindow.updateFields(webFields);
 
 		//  save it - of errors ignore changes
 		if (!curTab.dataSave(true)) {
-			//curTab.dataIgnore();
+			//highlight the missing fields
+			mobileWindow.saveRecord(webFields, null);
 			generateSingleRowView(false);
 			return;
 		}
