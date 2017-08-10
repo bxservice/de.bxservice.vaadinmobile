@@ -165,7 +165,6 @@ public class WLocationView extends VerticalLayout {
 
 		txtCity = new WComboBoxCity(m_WindowNo);
 		txtCity.setSizeFull();
-		//txtCity.addStyleName("search-field");
 
 		txtPostal = new TextField();
 		txtPostal.setPlaceholder(Msg.getElement(Env.getCtx(), "Postal"));
@@ -178,10 +177,12 @@ public class WLocationView extends VerticalLayout {
 		txtPostalAdd.addStyleName("search-field");
 
 		lstRegion = new NativeSelect<>(Msg.getMsg(Env.getCtx(), "Region"));
+		lstRegion.addStyleName("bx-select");
 		lstRegion.setSizeFull();
 
 		lstCountry = new NativeSelect<>(Msg.getMsg(Env.getCtx(), "Country"));
 		lstCountry.setEmptySelectionAllowed(false);
+		lstCountry.addStyleName("bx-select");
 		lstCountry.setSizeFull();
 	}
 
