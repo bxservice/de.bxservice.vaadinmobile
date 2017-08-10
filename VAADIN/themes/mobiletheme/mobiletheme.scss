@@ -291,6 +291,9 @@
   }
 
   .bxwindow-tabs {
+  	 padding-bottom: 45px !important;
+  	 border-radius: 0;
+     border: none;
      background-color: $theme-color;
      position: fixed;
      top: $toolbar-height;
