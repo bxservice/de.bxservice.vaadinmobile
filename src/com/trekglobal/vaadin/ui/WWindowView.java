@@ -13,6 +13,7 @@ import org.compiere.model.GridTab;
 import org.compiere.model.GridWindow;
 import org.compiere.model.GridWindowVO;
 import org.compiere.model.I_AD_Process;
+import org.compiere.model.MLocation;
 import org.compiere.model.MMenu;
 import org.compiere.model.MProcess;
 import org.compiere.model.MProcessPara;
@@ -834,6 +835,15 @@ IFindListener, Button.ClickListener, DataStatusListener {
 		mobileWindow.saveRecord(webFields, field);
 		generateSingleRowView(false);
 	}
+	
+	@Override
+	public void onLocation(WebField webField) {
+		MLocation location = null;
+		if (curTab.getValue(webField.getGridField()) != null) {
+			location = new MLocation(ctx, (Integer) curTab.getValue(webField.getGridField()), null);
+		}
+		onLocation(webField, location, s_WindowNo);
+	}
 
 	@Override
 	public void dataStatusChanged(DataStatusEvent e) {
@@ -907,5 +917,5 @@ IFindListener, Button.ClickListener, DataStatusListener {
             e.setConfirmed(true);   //  show just once - if MTable.setCurrentRow is involved the status event is re-issued
         }
 	}
-	
+
 }

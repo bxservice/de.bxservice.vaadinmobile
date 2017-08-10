@@ -275,7 +275,7 @@ public class WProcessView extends AbstractWebFieldView {
 	}
 
 	@Override
-	public void onLocationLookUp(WebField webField) {
+	public void onLocation(WebField webField) {
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.trekglobal.vaadin.ui;
 
 import org.compiere.model.GridTab;
+import org.compiere.model.MLocation;
 
 import com.trekglobal.vaadin.mobile.MobileLookup;
 import com.trekglobal.vaadin.mobile.MobileLookupGenericObject;
@@ -14,8 +15,7 @@ public abstract class AbstractWebFieldView extends AbstractToolbarView implement
 	 * 
 	 */
 	private static final long serialVersionUID = -9222751548452760308L;
-	protected PopupView lookupPopup;
-	protected WLookupView lookupContent;
+	protected PopupView popupView;
 
 	public AbstractWebFieldView(WNavigatorUI loginPage) {
 		super(loginPage);
@@ -37,12 +37,12 @@ public abstract class AbstractWebFieldView extends AbstractToolbarView implement
 		lookup.runLookup();
 
 		//  Create Document
-		lookupContent = new WLookupView(this, lookup);
-		lookupPopup = new PopupView(null, lookupContent);
-		lookupPopup.addStyleName("searchdialog");
-		addComponent(lookupPopup);
+		WLookupView lookupContent = new WLookupView(this, lookup);
+		popupView = new PopupView(null, lookupContent);
+		popupView.addStyleName("searchdialog");
+		addComponent(popupView);
 
-		lookupPopup.addPopupVisibilityListener(event -> {
+		popupView.addPopupVisibilityListener(event -> {
 			if (event.isPopupVisible())
 				content.addStyleName("bxwindow-content-busy");
 			else {
@@ -50,13 +50,13 @@ public abstract class AbstractWebFieldView extends AbstractToolbarView implement
 			}
 		});
 
-		lookupPopup.setPopupVisible(!lookupPopup.isPopupVisible());
+		popupView.setPopupVisible(!popupView.isPopupVisible());
 	}
 	
 	@Override
 	public void onLookUpOK(WebField webField, MobileLookupGenericObject selectedRecord) {
 		webField.setNewValue(String.valueOf(selectedRecord.getId()), selectedRecord.getQueryValue());
-		lookupPopup.setPopupVisible(false);
+		popupView.setPopupVisible(false);
 		
 		if (webField.isHasDependents() || webField.isHasCallout())
 			onChange(webField);
@@ -64,11 +64,40 @@ public abstract class AbstractWebFieldView extends AbstractToolbarView implement
 	
 	@Override
 	public void onLookUpCancel() {
-		lookupPopup.setPopupVisible(false);
+		popupView.setPopupVisible(false);
 	}
 	
 	@Override
-	public void onLocationLookUp(WebField webField) {
+	public void onLocation(WebField webField, MLocation location, int m_windowNo) {
+		syncCtx();
 
+		WLocationView locationContent = new WLocationView(this, location, webField, m_windowNo);
+		popupView = new PopupView(null, locationContent);
+		popupView.addStyleName("searchdialog");
+		addComponent(popupView);
+
+		popupView.addPopupVisibilityListener(event -> {
+			if (event.isPopupVisible())
+				content.addStyleName("bxwindow-content-busy");
+			else {
+				content.removeStyleName("bxwindow-content-busy");
+			}
+		});
+
+		popupView.setPopupVisible(!popupView.isPopupVisible());
+	}
+	
+	@Override
+	public void onLocationOk(WLocationView locationView) {
+		popupView.setPopupVisible(false);
+		MLocation location = locationView.getLocation();
+		
+		if (!locationView.isChanged())
+			return;
+		
+		WebField webField = locationView.getWebField();
+		webField.setNewValue(String.valueOf(location.getC_Location_ID()), location.getCity());
+		if (webField.isHasDependents() || webField.isHasCallout())
+			onChange(webField);
 	}
 }
