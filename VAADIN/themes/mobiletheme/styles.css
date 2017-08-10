@@ -12784,3 +12784,29 @@ div.v-layout.v-horizontal.v-widget {
 	color: blue;
 	background: none;
 }
+
+.mobiletheme .about-logo {
+	display: block;
+	text-align: center;
+}
+
+.mobiletheme .about-logo .v-icon {
+	width: 70%;
+	margin: 50px 0;
+}
+
+.mobiletheme .about-title {
+	font-size: xx-large;
+	color: #6d84a2;
+	font-weight: bold;
+}
+
+.mobiletheme .about-subs {
+	font-size: x-large;
+	color: #6d84a2;
+}
+
+.mobiletheme .about-dev {
+	font-size: large;
+	color: #6d84a2;
+}

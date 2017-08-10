@@ -361,5 +361,31 @@
     color: blue;
     background: none;
   }
+ 
+  .about-logo {
+	display: block;
+    text-align: center;
+  }
+ 
+  .about-logo .v-icon {
+  	 width: 70%;
+  	 margin: 50px 0;
+  }
+ 
+  .about-title {
+  	font-size: xx-large;
+    color: $theme-color;
+    font-weight: bold;
+  }
+ 
+  .about-subs {
+  	font-size: x-large;
+    color: $theme-color;
+  }
+ 
+   .about-dev {
+  	font-size: large;
+    color: $theme-color;
+  }
 
 }
