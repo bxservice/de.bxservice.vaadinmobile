@@ -64,7 +64,8 @@ public class WLoginPanel extends AbstractToolbarView {
 		String lngText = Msg.translate(AD_Language, "AD_Language");
 
 		//Header
-		header = new WHeader(this, false, false);
+		header = new WHeader(this, true, true);
+		header.setAboutButton();
 
 		//Content
 		content = new CssLayout();
@@ -208,6 +209,11 @@ public class WLoginPanel extends AbstractToolbarView {
             currSess.setLocale(locale);
         }
 
+	}
+	
+	@Override
+	public void onRightButtonPressed() {
+		loginPage.openAboutPage();
 	}
 
 	@Override

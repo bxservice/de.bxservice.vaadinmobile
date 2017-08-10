@@ -73,5 +73,9 @@ public class WHeader extends HorizontalLayout {
 	public void updateTitle(String title) {
 		centerLabel.setValue(title);
 	}
+	
+	public void setAboutButton() {
+		rightButton.setIcon(VaadinIcons.INFO_CIRCLE_O);
+	}
 
 }
