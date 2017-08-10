@@ -526,7 +526,7 @@ public class WebField {
 		display.addStyleName("bxpopup-button");
 		
 		if (m_displayType == DisplayType.Location ){
-			display.addClickListener(e -> fieldListener.onLocationLookUp(this));
+			display.addClickListener(e -> fieldListener.onLocation(this));
 		}else 
 			display.addClickListener(e -> fieldListener.onLookUp(this));
 
