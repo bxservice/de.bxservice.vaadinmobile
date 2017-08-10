@@ -94,6 +94,11 @@ public class WNavigatorUI extends UI {
 	public void loginOk(String userName, KeyNamePair[] clientsKNPairs) {
 		createRolePanel(userName, clientsKNPairs);
 	}
+	
+	public void openAboutPage() {
+		navigator.addView(WAboutView.NAME, new WAboutView(this));
+		navigator.navigateTo(WAboutView.NAME);
+	}
 
 	protected void createRolePanel(String userName, KeyNamePair[] clientsKNPairs) {
 		navigator.addView(WRolePanel.NAME, new WRolePanel(this, userName, clientsKNPairs));
