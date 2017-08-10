@@ -43,6 +43,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
 
@@ -78,6 +79,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	//UI
 	private CssLayout singleRowSection;
 	private WFooter   footer;
+	private Panel tabsPanel;
 	private VerticalLayout tabs;
 	private PopupView processPopup;
 	private PopupView searchPopup;
@@ -278,7 +280,8 @@ IFindListener, Button.ClickListener, DataStatusListener {
 
 	private void initTabs() {
 		tabs = new VerticalLayout();
-		tabs.addStyleName("bxwindow-tabs");
+		tabsPanel = new Panel(tabs);
+		tabsPanel.addStyleName("bxwindow-tabs");
 
 		for (int i = curTab.getTabNo(); i < mWindow.getTabCount(); i++) {
 			GridTab tab = mWindow.getTab(i);
@@ -316,7 +319,7 @@ IFindListener, Button.ClickListener, DataStatusListener {
 
 		// Enable Responsive CSS selectors for the component
 		Responsive.makeResponsive(this);
-		addComponents(header, content, footer, tabs);
+		addComponents(header, content, footer, tabsPanel);
 	}
 
 	@Override
@@ -791,9 +794,9 @@ IFindListener, Button.ClickListener, DataStatusListener {
 	private void updateTabMenu() {
 		footer.setVisible(!footer.isVisible());
 		if (!footer.isVisible())
-			tabs.addStyleName("bxwindow-tabs-active");
+			tabsPanel.addStyleName("bxwindow-tabs-active");
 		else
-			tabs.removeStyleName("bxwindow-tabs-active");
+			tabsPanel.removeStyleName("bxwindow-tabs-active");
 	}
 
 	private void updateHeader() {
