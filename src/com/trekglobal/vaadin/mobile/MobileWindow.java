@@ -70,7 +70,7 @@ public class MobileWindow {
 	 * 	Update Field Values from Parameter
 	 *	@return true if error
 	 */
-	private boolean updateFields(ArrayList<WebField> webFields) { 
+	public boolean updateFields(ArrayList<WebField> webFields) { 
 		boolean error = false;
 
 		//  loop through parameters
