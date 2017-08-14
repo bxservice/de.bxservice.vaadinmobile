@@ -147,7 +147,7 @@ public class WMenuView extends AbstractToolbarView implements Button.ClickListen
 			regenerateMenu(node);
 		} else if (node.isWindow()) {
 			loginPage.openWindow(node.getNode_ID());
-		} else if (node.isProcess()) {
+		} else if (node.isProcess() || node.isReport()) {
 			loginPage.openProcessWindow(node.getNode_ID());
 		}
 	}

@@ -32,6 +32,7 @@ public class MobileProcess {
 	protected CLogger log = CLogger.getCLogger(getClass());
 	private MProcess process;
 	private Properties ctx;
+	private File pdfFile;
 	private boolean processOK = false;
 
 	public MobileProcess(MProcess process) {
@@ -133,33 +134,13 @@ public class MobileProcess {
 					processOK = false;
 				} else {
 					try {
-						StringBuilder fileName = new StringBuilder(process.get_Translation("Name"));
-						//response.setHeader("Content-Disposition", "inline; filename="+fileName.toString()+ ".pdf" );
-						File file = File.createTempFile(fileName.toString(), ".pdf");
+						File file = File.createTempFile(getFileName(), ".pdf");
 						
-						if (re.createPDF(file)) {	
-							//String error = MobileUtil.streamFile(response, file);
-							//String error = streamResult (request, response, pInstance.getAD_PInstance_ID(), file);
-							/*if (error == null) {
-								return null;
-							}
-							doc = MobileDoc.create(error);*/
-
-							//Modified by Rob Klein 6/1/07
-							/**
-							String url = "WProcess?AD_PInstance_ID=" 
-								+ pInstance.getAD_PInstance_ID()
-								+ "&File=" 
-								+ URLEncoder.encode(file.getAbsolutePath(), WebEnv.ENCODING);
-							a link = new a (url, null, a.TARGET_BLANK, process.get_Translation("Name"));
-							center
-								.addElement(new p()
-									.addElement("Report created: ")
-									.addElement(link));
-							//	Marker that Process is OK
-							 * */
-							//wsc.ctx.put("AD_PInstance_ID=" + pInstance.getAD_PInstance_ID(), "ok");
-
+						if (re.createPDF(file)) {
+							processMessage = pi.getSummary();
+							pdfFile = file;
+							processOK = true;
+							ctx.put("AD_PInstance_ID=" + pInstance.getAD_PInstance_ID(), "ok");
 						} else {
 							processMessage = "Could not create Report";
 							processOK = false;
@@ -313,4 +294,13 @@ public class MobileProcess {
 	public boolean getProcessOK() {
 		return processOK;
 	}
+	
+	public File getPdfFile() {
+		return pdfFile;
+	}
+	
+	public String getFileName() {
+		return process.get_Translation("Name");
+	}
+
 }
