@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import org.adempiere.util.ServerContext;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPInstancePara;
 import org.compiere.model.MProcess;
@@ -40,7 +41,8 @@ public class MobileProcess {
 
 	public String runProcess(int AD_Window_ID, int AD_Table_ID, int AD_Record_ID, 
 			HashMap<String, String> parameters) throws IOException {
-
+		
+		ServerContext.setCurrentInstance(ctx);
 		String processMessage = null; 
 		
 		if (process == null)
@@ -175,6 +177,7 @@ public class MobileProcess {
 
 	private MPInstance fillParameter(HashMap<String, String> parameters) {
 
+		ServerContext.setCurrentInstance(ctx);
 		MPInstance pInstance = new MPInstance(process, 0);
 		MPInstancePara[] iParams = pInstance.getParameters();
 
