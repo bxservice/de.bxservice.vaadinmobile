@@ -34,8 +34,6 @@ public class MobileLookup {
 	private int AD_Process_ID = 0;
 	private int refValueId = 0;
 	private boolean isProcessLookUp = false;
-	private boolean isProcessButtonLookUp = false;
-	private boolean mandatory = false;
 	private String[] m_searchFields;
 	private String[] m_searchLabels;
 
@@ -49,7 +47,6 @@ public class MobileLookup {
 		AD_Process_ID = webField.getProcessID();
 
 		if (AD_Process_ID > 0) {
-			isProcessButtonLookUp = true;
 			isProcessLookUp = true;
 		}
 	}
@@ -88,12 +85,6 @@ public class MobileLookup {
 			}
 
 			header = mField.getHeader();
-
-			boolean hasDependents = curTab.hasDependants(columnName);
-			boolean hasCallout = mField.getCallout().length() > 0;
-
-			mandatory = hasDependents || hasCallout;
-
 			refValueId = mField.getAD_Reference_Value_ID();
 		}
 
