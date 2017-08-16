@@ -142,6 +142,14 @@ IFindListener, Button.ClickListener, DataStatusListener {
 				" AND (IsIdentifier ='Y' OR IsSelectionColumn ='Y') ORDER BY SeqNo,SeqNoSelection";
 
 		ValueNamePair[] idColumns = DB.getValueNamePairs(idSQL, false,null);
+		
+		if (idColumns.length == 0) {
+            log.warning("No columns to print in multirow");
+            idSQL = "SELECT ColumnName, AD_Column_ID from AD_Column" +
+    				" WHERE AD_Table_ID = " + curTab.getAD_Table_ID() +
+    				" AND ismandatory = 'Y' AND isupdateable = 'Y' ORDER BY SeqNo,SeqNoSelection";
+            idColumns = DB.getValueNamePairs(idSQL, false, null);
+		}
 
 		String primary = null;
 		String secondary = null;
