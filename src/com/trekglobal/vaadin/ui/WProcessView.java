@@ -1,6 +1,9 @@
 package com.trekglobal.vaadin.ui;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,6 +14,7 @@ import org.compiere.util.CLogger;
 import org.compiere.util.Msg;
 
 import com.trekglobal.vaadin.mobile.MobileProcess;
+import com.trekglobal.vaadin.ui.OnDemandFileDownloader.OnDemandStreamResource;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.ui.ContentMode;
@@ -35,11 +39,15 @@ public class WProcessView extends AbstractWebFieldView {
 	private ArrayList<WebField> processWebFields = new ArrayList<WebField>();
 	
 	private MProcess process;
+	private MobileProcess mProcess;
+	
+	private Button submitButton;
 	
 	public WProcessView(WNavigatorUI loginPage, int AD_Menu_ID) {
 		super(loginPage);
     	syncCtx();
 		process = MProcess.getFromMenu(ctx, AD_Menu_ID);
+		mProcess = new MobileProcess(process);
 		
 		if (process == null) {
 			Notification.show("Process not found",
@@ -205,40 +213,45 @@ public class WProcessView extends AbstractWebFieldView {
 			if (ctx != null)
 				text = Msg.getMsg(ctx, "submit");
 
-			Button submitButton = new Button(text);
+			submitButton = new Button(text);
 			submitButton.addStyleName("bx-loginbutton");
 			
-			submitButton.addClickListener(e -> {
-				MobileProcess mProcess = new MobileProcess(process);
-
-				HashMap<String, String> parameters = new HashMap<String, String>();
-
-				//  loop through parameters
-				for (WebField webField : processWebFields) {
-					parameters.put(webField.getProcessParaKey(), webField.getNewValue());
-				}   //  for all parameters
-
-				if (process.getJasperReport() != null && processWebFields.size() == 0) {
-					//parameters.put("AD_Record_ID", String.valueOf(curTab.getRecord_ID()));
-				}
-
-				try {
-					String message = mProcess.runProcess(0, 0, 0, parameters);
-
-					Type messageType = Type.HUMANIZED_MESSAGE;
-					if (!mProcess.getProcessOK())
-						messageType = Type.ERROR_MESSAGE;
-
-					Notification.show(message, messageType);
-
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-
-			});
+			if (process.isReport()) {
+				OnDemandStreamResource myResource = createOnDemandResource();
+				OnDemandFileDownloader fileDownloader = new OnDemandFileDownloader(myResource);
+				fileDownloader.extend(submitButton);
+			} else
+				submitButton.addClickListener(e -> runProcess());
 
 			content.addComponents(singleRowSection, submitButton);
 		}
+	}
+	
+	private void runProcess() {
+		HashMap<String, String> parameters = new HashMap<String, String>();
+
+		//  loop through parameters
+		for (WebField webField : processWebFields) {
+			parameters.put(webField.getProcessParaKey(), webField.getNewValue());
+		}   //  for all parameters
+
+		if (process.getJasperReport() != null && processWebFields.size() == 0) {
+			//parameters.put("AD_Record_ID", String.valueOf(curTab.getRecord_ID()));
+		}
+
+		try {
+			String message = mProcess.runProcess(0, 0, 0, parameters);
+			
+			Type messageType = Type.HUMANIZED_MESSAGE;
+			if (!mProcess.getProcessOK())
+				messageType = Type.ERROR_MESSAGE;
+
+			Notification.show(message, messageType);
+
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 	}
 	
 	protected void init() {
@@ -285,6 +298,31 @@ public class WProcessView extends AbstractWebFieldView {
 
 	@Override
 	public void onChange(WebField webField) {
+	}
+
+	private OnDemandStreamResource createOnDemandResource() {
+		return new OnDemandStreamResource() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -9220282386521371833L;
+
+			public InputStream getStream() {
+				runProcess();
+				try {
+					return new FileInputStream(mProcess.getPdfFile());
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+					return null;
+				}
+			}
+
+			@Override
+			public String getFilename() {
+				return mProcess.getFileName() + ".pdf";
+			}
+		};
 	}
 
 }
