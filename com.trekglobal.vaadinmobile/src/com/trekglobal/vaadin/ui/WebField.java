@@ -16,6 +16,10 @@
  *****************************************************************************/
 package com.trekglobal.vaadin.ui;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -60,6 +64,10 @@ import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.Upload;
+import com.vaadin.ui.Upload.Receiver;
+import com.vaadin.ui.Upload.SucceededEvent;
+import com.vaadin.ui.Upload.SucceededListener;
 
 /**
  *	Web Field.
@@ -278,6 +286,9 @@ public class WebField {
 		}
 		else if (m_displayType == DisplayType.Assignment)
 			return getAssignmentField(data);
+		else if (m_displayType == DisplayType.FileName)
+			componentField = getUploadField(data);
+
 		
 		if (componentField == null)
 			componentField = getStringField(dataValue);
@@ -430,6 +441,30 @@ public class WebField {
 			string.addValueChangeListener(event -> fieldListener.onChange(this));
 		
 		return string;
+	}
+	
+	/**
+	 * 	Create an upload Field
+	 * 	@param data initial value
+	 *	@return uploadField
+	 */
+	private Component getUploadField(Object data) {
+		
+		FileReceiver receiver = new FileReceiver();
+		
+		String caption = "";
+		if (data != null)
+			caption = data.toString();
+		Upload upload = new Upload(caption, receiver);
+		upload.setEnabled(!m_readOnly);
+		upload.addSucceededListener(receiver);
+		
+		if (m_error)
+			upload.setStyleName(C_ERROR);
+		else if (m_mandatory)
+			upload.setStyleName(C_MANDATORY);
+		
+		return upload;
 	}
 
 	/**
@@ -1078,7 +1113,42 @@ public class WebField {
 			}
 			if (componentField instanceof Button)
 				return (String) ((Button) componentField).getData();
+			if (componentField instanceof Upload)
+				return ((Upload) componentField).getCaption();
 		}
 		return newValue;
+	}
+	
+	private class FileReceiver implements Receiver, SucceededListener {
+		private static final long serialVersionUID = 2720120716088168441L;
+		private File file;
+
+		@Override
+	    public OutputStream receiveUpload(final String filename, final String MIMEType) {
+			System.out.println("Heyyyo " + filename + MIMEType);
+			 FileOutputStream fos = null; // Output stream to write to
+		        
+		        try {
+		        	file = File.createTempFile("adempiere_", "_"+  filename);
+		            fos = new FileOutputStream(file);
+		        } catch (IOException e) {
+		            // Error while opening the file. Not reported here.
+		            e.printStackTrace();
+		            return null;
+		        }
+
+		        return fos; // Return the output stream to write to
+		}
+
+		@Override
+		public void uploadSucceeded(SucceededEvent event) {
+			if (file == null)
+				return;
+			
+			System.out.println(componentField.getClass());
+			
+			if (componentField instanceof Upload)
+				((Upload) componentField).setCaption(file.getAbsolutePath());
+		}
 	}
 }	//	WebField
