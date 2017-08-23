@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rm:rmap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0" xmlns:maven="http://www.eclipse.org/buckminster/MavenProvider-1.0" xmlns:rm="http://www.eclipse.org/buckminster/RMap-1.0">
   <rm:locator searchPathRef="org.adempiere.server" failOnError="false"/>
-  <rm:locator searchPathRef="com.trekglobal.update" failOnError="false"/>
   <rm:locator searchPathRef="workspace.bundle.jar" failOnError="false"/>
   <rm:locator searchPathRef="workspace.bundle.project" failOnError="false"/>
   <rm:locator searchPathRef="workspace.feature.project"/>
@@ -9,14 +8,7 @@
     <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="p2" source="false" mutable="false">
       <rm:property key="buckminster.source" value="false"/>
       <rm:property key="buckminster.mutable" value="false"/>
-      <rm:uri format="file:////var/lib/jenkins/workspace/Trek%20Global%20iDempiere%20Bizidium%20Development%20Release/buckminster.output/org.adempiere.server_2.0.0-eclipse.feature/site.p2/"/>
-    </rm:provider>
-  </rm:searchPath>
-  <rm:searchPath name="com.trekglobal.update">
-    <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="p2" source="false" mutable="false">
-      <rm:property key="buckminster.source" value="false"/>
-      <rm:property key="buckminster.mutable" value="false"/>
-      <rm:uri format="file:////var/lib/jenkins/workspace/Trek%20Global%20iDempiere%20Bizidium%20Ext%20Dev%20Release/buckminster.output/com.trekglobal.update_2.0.0-eclipse.feature/site.p2/"/>
+      <rm:uri format="file:///var/lib/jenkins/workspace/iDempiere4.1/buckminster.output/org.adempiere.server_4.1.0-eclipse.feature/site.p2/"/>
     </rm:provider>
   </rm:searchPath>
   <rm:searchPath name="workspace.bundle.project">
