@@ -4,10 +4,28 @@
         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 
+	<display-name>MyApplication</display-name>
+	<context-param>
+		<description>Vaadin production mode</description>
+		<param-name>productionMode</param-name>
+		<param-value>false</param-value>
+	</context-param>
 	<servlet>
-		<display-name>iDempiere Login</display-name>
-		<servlet-name>vaadinServlet</servlet-name>
+		<servlet-name>VaadinMobile</servlet-name>
 		<servlet-class>com.trekglobal.vaadin.ui.MobileVaadinServlet</servlet-class>
+		<init-param>
+			<description>Vaadin UI</description>
+			<param-name>UI</param-name>
+			<param-value>com.trekglobal.vaadin.ui.WNavigatorUI</param-value>
+		</init-param>
 	</servlet>
+	<servlet-mapping>
+		<servlet-name>VaadinMobile</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>VaadinMobile</servlet-name>
+		<url-pattern>/VAADIN/*</url-pattern>
+	</servlet-mapping>
 
 </web-app>
