@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="de.bxservice.vaadinmobile">
+    <wb-module deploy-name="com.trekglobal.vaadinmobile">
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="java-output-path" value="/de.bxservice.vaadinmobile/bin"/>
-        <property name="context-root" value="de.bxservice.vaadinmobile"/>
+        <property name="context-root" value="com.trekglobal.vaadinmobile"/>
+        <property name="java-output-path" value="/com.trekglobal.vaadinmobile/bin"/>
     </wb-module>
 </project-modules>
